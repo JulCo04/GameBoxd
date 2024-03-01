@@ -61,12 +61,12 @@ app.post('/api/register', async (req, res, next) => {
     try {
         const db = client.db("VGReview");
         const result = db.collection('Users').insertOne(newUser);
-        console.log("New user added:", result.ops[0]); // logs the inserted user object
+        
     } catch (e) {
         error = e.toString();
     }
 
-    var ret = { error: error };
+    var ret = { error: '' };
     res.status(200).json(ret);
 });
 
@@ -83,7 +83,6 @@ app.post('/api/login', async (req, res, next) => {
     if (results.length > 0) {
         username = results[0].username;
         _id = results[0]._id;
-
     }
     var ret = { id: _id, username: username, error: '' };
     res.status(200).json(ret);
