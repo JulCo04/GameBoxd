@@ -26,7 +26,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post('/api/addcard', async (req, res, next) => {
+/*app.post('/api/addcard', async (req, res, next) => {
     // incoming: userId, color
     // outgoing: error
     const { userId, card } = req.body;
@@ -42,7 +42,7 @@ app.post('/api/addcard', async (req, res, next) => {
     cardList.push(card);
     var ret = { error: error };
     res.status(200).json(ret);
-});
+});*/
 
 app.post('/api/register', async (req, res, next) => {
     // incoming: username, login, password
@@ -88,7 +88,62 @@ app.post('/api/login', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-app.post('/api/searchcards', async (req, res, next) => {
+app.post('/api/searchusers', async (req, res, next) => {
+    // incoming: username
+    // outgoing: user object, error
+    const { username } = req.body;
+    var error = '';
+    var user = null;
+
+    try {
+        const db = client.db("VGReview");
+        const result = await db.collection('Users').findOne({ username: username });
+
+        if (result) {
+            user = {
+                id: result._id,
+                username: result.username,
+                dateCreated: result.dateCreated,
+                dateLastLoggedIn: result.dateLastLoggedIn
+            };
+        } else {
+            error = 'User not found';
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { user: user, error: error };
+    res.status(200).json(ret);
+});
+
+const { ObjectId } = require('mongodb');
+
+app.post('/api/deleteuser', async (req, res, next) => {
+    // incoming: id
+    // outgoing: success message, error
+    const { id } = req.body; // Extracting id from req.body
+    var error = '';
+    var successMessage = '';
+
+    try {
+        const db = client.db("VGReview");
+        const result = await db.collection('Users').deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 1) {
+            successMessage = 'User deleted successfully';
+        } else {
+            error = 'User not found';
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { successMessage: successMessage, error: error };
+    res.status(200).json(ret);
+});
+
+/*app.post('/api/searchcards', async (req, res, next) => {
     // incoming: userId, search
     // outgoing: results[], error
     var error = '';
@@ -103,7 +158,7 @@ app.post('/api/searchcards', async (req, res, next) => {
     }
     var ret = { results: _ret, error: error };
     res.status(200).json(ret);
-});
+});*/
 
 app.listen(PORT, () => {
     console.log('Server listening on port ' + PORT);
