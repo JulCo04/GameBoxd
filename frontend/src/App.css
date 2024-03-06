@@ -36,3 +36,156 @@
     transform: rotate(360deg);
   }
 }
+
+/* -------- Starting page -------- */
+.page-container {
+    background-color: #000814; /* Your desired background color */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.center-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nav {
+  background-color: #0A9396;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+.site-title {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.nav ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: .25rem;
+  
+}
+
+.nav li {
+  font-weight: bold;
+  cursor: pointer;
+  color: #cacaca;
+}
+
+
+.nav li:hover {
+  color: #FFFFFF;
+}
+
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.form-container {
+  position: relative;
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #83929E;
+  border-radius: 3px;
+}
+
+.exit-button {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  color: white;
+}
+
+.exit-button img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.login-inner-title {
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  color: white;
+  padding-bottom: 2px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  border-radius: 3px;
+  background-color: #364B5E;
+  color: rgb(255, 255, 255);
+}
+
+.form-group input::placeholder {
+  color: #83929E;
+}
+
+.form-group input {
+  outline: none; 
+}
+ 
+
+.submit-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #0A9396;
+  color: white;
+  border: none;
+  border-radius:  5px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #278889;
+}
