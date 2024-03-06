@@ -8,9 +8,9 @@ function NavigationBar({ onLoginClick, onRegisterClick }) {
                 GamerBoxd
             </Link>
             <ul>
-                <li onClick={onLoginClick}>Login</li>
-                <li onClick={onRegisterClick}>Create Account</li>
-                <li>Games</li>
+                <li><button class="text-button" onClick={onLoginClick}>Login</button></li>
+                <li><button class="text-button" onClick={onRegisterClick}>Create Account</button></li>
+                <li><Link to="/games">Games</Link></li>
             </ul>
         </nav>
     );

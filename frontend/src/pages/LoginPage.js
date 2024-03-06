@@ -5,23 +5,23 @@ import Register from '../components/Register';
 import NavigationBar from '../components/NavigationBar';
 
 const LoginPage = () => {
-    const [showLogin, setShowLogin] = useState(false);
-    const [showRegister, setShowRegister] = useState(false);
+    const [showForm, setShowForm] = useState(null);
 
-    const toggleLogin = () => {
-        setShowLogin(!showLogin);
+    const toggleForm = (form) => {
+        setShowForm(prevForm => (prevForm === form) ? null : form);
+        logClick(form);
     };
 
-    const toggleRegister = () => {
-        setShowRegister(!showRegister);
+    const logClick = (action) => {
+        console.log(`${action} clicked!`);
     };
 
     return (
         <div className="page-container">
-            <NavigationBar onLoginClick={toggleLogin} onRegisterClick={toggleRegister}/>
+            <NavigationBar onLoginClick={() => toggleForm('login')} onRegisterClick={() => toggleForm('register')}/>
             <div className="center-container">
-                {showLogin && <Login />}
-                {showRegister && <Register />}
+                {showForm === 'login' && <Login />}
+                {showForm === 'register' && <Register />}
             </div>
         </div>
     );

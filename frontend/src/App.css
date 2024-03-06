@@ -85,7 +85,7 @@
   
 }
 
-.nav li {
+.nav li  {
   font-weight: bold;
   cursor: pointer;
   color: #cacaca;
@@ -95,6 +95,16 @@
 .nav li:hover {
   color: #FFFFFF;
 }
+
+.text-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+
 
 .overlay {
   width: 100vw;
