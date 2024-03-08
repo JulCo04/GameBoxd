@@ -1,0 +1,41 @@
+
+$primary: #0A9396;
+$secondary: #364B5E;
+$light: #cacaca;
+
+$enable-negative-margins: true;
+
+$display-font-sizes: (
+  title: 7rem,
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2.5rem,
+  7: 2rem,
+  8: 1.5rem,
+  9: 1rem
+);
+
+$spacer: 1rem !default;
+$spacers: () !default;
+$spacers: map-merge(
+    (
+        0: 0,
+        1: ($spacer * .25),
+        2: ($spacer * .5),
+        3: $spacer,
+        4: ($spacer * 1.5),
+        5: ($spacer * 3),
+        6: ($spacer * 4.5),
+        7: ($spacer * 6),
+        8: ($spacer * 7.5),
+        9: ($spacer * 9),
+        10: ($spacer * 10),
+    ),
+    $spacers    
+);
+
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss"
