@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 function Login({onExitClick}) {
-    var loginName;
-    var loginPassword;
+    var email;
+    var password;
 
     const [message, setMessage] = useState('');
     const [showOverlay, setShowOverlay] = useState(true); // State to track overlay visibility
@@ -20,8 +20,9 @@ function Login({onExitClick}) {
     const doLogin = async event => {
         event.preventDefault();
 
-        var obj = { login: loginName.value, password: loginPassword.value };
+        var obj = { email: email.value, password: password.value };
         var js = JSON.stringify(obj);
+        console.log(js)
 
         try {
 
@@ -31,19 +32,20 @@ function Login({onExitClick}) {
 
             var res = JSON.parse(await response.text());
             console.log(res);
-
+            
             // If username does not exist display a notice
-            if (res.username == '') {
+            if ((res.displayName == '') || (res.displayName == null)) {
                 setMessage('User/Password combination incorrect');
             }
             else {
-                var user = { id: res.id, username: res.username }
+                console.log(res.username)
+                var user = { id: res.id, displayName: res.displayName }
                 
                 // Save user id and username in "user_data"
                 localStorage.setItem('user_data', JSON.stringify(user));
 
                 setMessage('');
-                window.location.href = '/LargeProject';
+               window.location.href = '/LargeProject';
             }
         }
         catch (e) {
@@ -69,16 +71,16 @@ function Login({onExitClick}) {
 
                     <div className="form-group">
                         
-                        <label>Login Name</label><br />
-                        <input type="text" id="login-name" placeholder="Enter your login name"
-                            ref={(c) => loginName = c} /><br />
+                        <label>Email</label><br />
+                        <input type="text" id="email" placeholder="Enter your email"
+                            ref={(c) => email = c} /><br />
 
                     </div>
 
                     <div className="form-group">
                         <label>Password</label><br />
                         <input type="password" id="login-password" placeholder="Enter your password"
-                            ref={(c) => loginPassword = c} /><br />
+                            ref={(c) => password = c} /><br />
                     </div>
                     <input type="submit" className="submit-button" value="Sign in" onClick={doLogin} />
                     <span id="loginResult">{message}</span>

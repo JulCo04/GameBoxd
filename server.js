@@ -71,8 +71,8 @@ app.post('/api/register', async (req, res, next) => {
 });
 
 app.post('/api/login', async (req, res, next) => {
-    // incoming: login, password
-    // outgoing: id, firstName, lastName, error
+    // incoming: email, password
+    // outgoing: id, displayName, error
     var error = '';
     const { email, password } = req.body;
     const db = client.db("VGReview");
