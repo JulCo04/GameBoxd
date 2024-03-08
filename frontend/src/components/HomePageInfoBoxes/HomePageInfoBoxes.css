@@ -1,0 +1,45 @@
+
+.InfoBox {
+    padding: 0 5px 0 5px;
+    height: 18rem;
+}
+
+
+/* sm */
+@media (min-width: 576px) {
+    .BoxText {
+        font-size:15px;
+    }
+}
+
+/* md */
+@media (min-width: 768px) {
+    .BoxText {
+        font-size: large;
+    }
+}
+
+/* lg */
+@media (min-width: 992px) {
+    .BoxText {
+        font-size: x-large;
+    }
+}
+
+/* xl */
+@media (min-width: 1200px) {
+    .BoxText {
+        font-size: x-large;
+    }
+}
+
+/* xxl */
+@media (min-width: 1200px) {
+    .BoxText {
+        font-size: x-large;
+    }
+}
+
+img {
+    height: 35%;
+}

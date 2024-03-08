@@ -3,6 +3,7 @@ import PageTitle from '../components/PageTitle';
 import Login from '../components/Login';
 import Register from '../components/Register';
 import NavigationBar from '../components/NavigationBar';
+import HomePageUI from '../components/HomePageUI';
 
 const LoginPage = () => {
     const [showForm, setShowForm] = useState(null);
@@ -23,6 +24,7 @@ const LoginPage = () => {
                 {showForm === 'login' && <Login />}
                 {showForm === 'register' && <Register />}
             </div>
+            <HomePageUI onLoginClick={()=> toggleForm('login')} onRegisterClick={()=> toggleForm('register')}/>
         </div>
     );
 };
