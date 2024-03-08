@@ -45,14 +45,14 @@ app.use((req, res, next) => {
 });*/
 
 app.post('/api/register', async (req, res, next) => {
-    // incoming: username, login, password
+    // incoming: email, password, displayname
     // outgoing: error
 
-    const { username, login, password } = req.body;
+    const { email, password, displayName } = req.body;
     const newUser = {
-        login: login,
+        email: email,
         password: password,
-        username: username,
+        displayName: displayName,
         dateCreated: new Date(), // Set current date as dateCreated
         dateLastLoggedIn: null // Set to null initially
     };
@@ -74,17 +74,74 @@ app.post('/api/login', async (req, res, next) => {
     // incoming: login, password
     // outgoing: id, firstName, lastName, error
     var error = '';
-    const { login, password } = req.body;
+    const { email, password } = req.body;
     const db = client.db("VGReview");
     const results = await
-        db.collection('Users').find({ login: login, password: password }).toArray();
+        db.collection('Users').find({ email: email, password: password }).toArray();
     var username = '';
     var id = -1;
     if (results.length > 0) {
-        username = results[0].username;
+        displayName = results[0].displayName;
         _id = results[0]._id;
     }
-    var ret = { id: _id, username: username, error: '' };
+    var ret = { id: _id, displayName: displayName, error: '' };
+    res.status(200).json(ret);
+});
+
+app.post('/api/updateuser', async (req, res, next) => {
+    // incoming: email (as identifier), new email, new password, new displayname
+    // outgoing: error
+
+    const { email, newEmail, newPassword, newDisplayName } = req.body;
+    var error = '';
+
+    try {
+        const db = client.db("VGReview");
+        const userCollection = db.collection('Users');
+
+        // Find the user by email
+        const user = await userCollection.findOne({ email: email });
+
+        if (!user) {
+            error = 'User not found.';
+        } else {
+            // Update user information if new values are provided
+            const updateFields = {};
+
+            // Check and update email
+            if (newEmail && newEmail !== user.email) {
+                updateFields.email = newEmail;
+            }
+
+            // Check and update password
+            if (newPassword) {
+                updateFields.password = newPassword;
+            }
+
+            // Check and update display name
+            if (newDisplayName) {
+                updateFields.displayName = newDisplayName;
+            }
+
+            // Update the user document if there are any changes
+            if (Object.keys(updateFields).length > 0) {
+                const result = await userCollection.updateOne(
+                    { email: email },
+                    { $set: updateFields }
+                );
+
+                if (result.modifiedCount === 0) {
+                    error = 'Failed to update user information.';
+                }
+            } else {
+                error = 'No fields to update.';
+            }
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { error: error };
     res.status(200).json(ret);
 });
 
