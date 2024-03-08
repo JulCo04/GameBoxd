@@ -51,6 +51,15 @@
   transform: translate(-50%, -50%);
 }
 
+.blurred-background {
+  --mask: linear-gradient(to bottom, 
+      rgba(0,0,0, 1) 0,   rgba(0,0,0, 1) 35%, 
+      rgba(0,0,0, 0) 90%, rgba(0,0,0, 0) 0
+  ) 100% 50% / 100% 100% repeat-x;
+
+  -webkit-mask: var(--mask);
+}
+
 .nav {
   background-color: #0A9396;
   color: white;
@@ -59,6 +68,7 @@
   align-items: stretch;
   gap: 2rem;
   padding: 0 1rem;
+  padding-bottom: 30px;
 }
 
 .site-title {
@@ -86,9 +96,11 @@
 }
 
 .nav li  {
+  align-items: center;
   font-weight: bold;
   cursor: pointer;
   color: #cacaca;
+  padding-top: 0.5rem;
 }
 
 
