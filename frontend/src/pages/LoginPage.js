@@ -9,20 +9,27 @@ const LoginPage = () => {
     const [showForm, setShowForm] = useState(null);
 
     const toggleForm = (form) => {
-        setShowForm(prevForm => (prevForm === form) ? null : form);
+        console.log("Current Form Status:", form)
+        setShowForm(form);
         logClick(form);
+        
     };
 
     const logClick = (action) => {
         console.log(`${action} clicked!`);
     };
 
+
     return (
         <div className="page-container">
             <NavigationBar onLoginClick={() => toggleForm('login')} onRegisterClick={() => toggleForm('register')}/>
             <div className="center-container">
-                {showForm === 'login' && <Login />}
-                {showForm === 'register' && <Register />}
+                {showForm === 'login' && 
+                    <Login onExitClick={() => setShowForm(null)}/>
+                }
+                {showForm === 'register' && 
+                    <Register  onExitClick={() => setShowForm(null)}/>
+                }
             </div>
             <HomePageUI onLoginClick={()=> toggleForm('login')} onRegisterClick={()=> toggleForm('register')}/>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Comment
-function Register() {
+function Register({onExitClick}) {
 
     var login;
     var username;    
@@ -40,6 +40,7 @@ function Register() {
     };
 
     const handleExitButtonClick = () => {
+        onExitClick();
         // Toggle the state to hide the overlay
         setShowOverlay(false);
     };

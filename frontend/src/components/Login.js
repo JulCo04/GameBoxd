@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Login() {
+function Login({onExitClick}) {
     var loginName;
     var loginPassword;
 
@@ -53,20 +53,21 @@ function Login() {
     };
 
     const handleExitButtonClick = () => {
+        onExitClick();
         // Toggle the state to hide the overlay
         setShowOverlay(false);
     };
 
     return (
         showOverlay && (
-            <div class="overlay"> 
-                <div class="form-container">
+            <div className="overlay"> 
+                <div className="form-container">
 
                     <button className="exit-button" onClick={handleExitButtonClick}>
                         <img src="../images/x-button.png" alt="EXIT"></img>
                     </button>
 
-                    <div class="form-group">
+                    <div className="form-group">
                         
                         <label>Login Name</label><br />
                         <input type="text" id="login-name" placeholder="Enter your login name"
@@ -74,12 +75,12 @@ function Login() {
 
                     </div>
 
-                    <div class="form-group">
+                    <div className="form-group">
                         <label>Password</label><br />
                         <input type="password" id="login-password" placeholder="Enter your password"
                             ref={(c) => loginPassword = c} /><br />
                     </div>
-                    <input type="submit" class="submit-button" value="Sign in" onClick={doLogin} />
+                    <input type="submit" className="submit-button" value="Sign in" onClick={doLogin} />
                     <span id="loginResult">{message}</span>
                 </div>
             </div>
