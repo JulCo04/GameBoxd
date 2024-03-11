@@ -79,7 +79,8 @@ app.post('/api/login', async (req, res, next) => {
     const results = await
         db.collection('Users').find({ email: email, password: password }).toArray();
     var username = '';
-    var id = -1;
+    var _id = -1;
+    var displayName = '';
     if (results.length > 0) {
         displayName = results[0].displayName;
         _id = results[0]._id;

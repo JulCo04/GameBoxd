@@ -35,8 +35,7 @@ function Login({onExitClick}) {
             console.log("Response: "+response.ok);    
             
             var res = JSON.parse(await response.text());
-            console.log("Registration Fetch Result" + res.displayName);
-            console.log("user_data: " + localStorage.getItem('user_data'));
+            console.log("Registration Fetch Result: " + res.displayName);
             
             // If username does not exist display a notice
             console.log(res.displayName == '');
@@ -48,9 +47,8 @@ function Login({onExitClick}) {
                 
                 // Save user id and username in "user_data"
                 localStorage.setItem('user_data', JSON.stringify(user));
-                email = '';
-                password = '';
-                res = null;
+
+                console.log("user_data: " + localStorage.getItem('user_data'));
                 setMessage('');
                 console.log("Registration Complete");
                 window.location.href = '/LargeProject';
