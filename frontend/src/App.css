@@ -139,9 +139,11 @@
 }
 
 .exit-button {
+  height: 15px;
+  width: 15px;
   position: absolute;
-  right: 10px;
-  top: 5px;
+  right: 5px;
+  top: 8px;
   background-color: transparent;
   border: none;
   padding: 0;

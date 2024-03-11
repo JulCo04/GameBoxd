@@ -67,7 +67,7 @@ function Register({onExitClick}) {
                 <div className="form-container">
 
                     <button className="exit-button" onClick={handleExitButtonClick}>
-                        <img src="../images/x-button.png" alt="EXIT"></img>
+                        <img src="x-button.png" alt="EXIT"></img>
                     </button>
 
                     <div className="form-group">

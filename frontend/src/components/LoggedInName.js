@@ -8,6 +8,7 @@ function LoggedInName() {
         event.preventDefault();
 
         localStorage.removeItem("user_data")
+        console.log(localStorage.getItem("user_data"));
         window.location.href = '/';
 
     };

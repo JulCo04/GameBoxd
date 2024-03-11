@@ -25,19 +25,21 @@ function Login({onExitClick}) {
 
         var obj = { email: email.value, password: password.value };
         var js = JSON.stringify(obj);
-        console.log(js)
+        console.log("JS" + js)
 
         try {
 
             // Fetch users id and username
             const response = await fetch(buildPath("api/login"),
                 { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
-
+            console.log("Response: "+response.ok);    
+            
             var res = JSON.parse(await response.text());
-            console.log(res);
-            console.log("HERE");
+            console.log("Registration Fetch Result" + res.displayName);
+            console.log("user_data: " + localStorage.getItem('user_data'));
             
             // If username does not exist display a notice
+            console.log(res.displayName == '');
             if ((res.displayName == '') || (res.displayName == null)) {
                 setMessage('User/Password combination incorrect');
             }
@@ -46,9 +48,11 @@ function Login({onExitClick}) {
                 
                 // Save user id and username in "user_data"
                 localStorage.setItem('user_data', JSON.stringify(user));
-
+                email = '';
+                password = '';
+                res = null;
                 setMessage('');
-                console.log("HERE");
+                console.log("Registration Complete");
                 //window.location.href = '/LargeProject';
             }
         }
@@ -70,7 +74,7 @@ function Login({onExitClick}) {
                 <div className="form-container">
 
                     <button className="exit-button" onClick={handleExitButtonClick}>
-                        <img src="../images/x-button.png" alt="EXIT"></img>
+                        <img src="x-button.png" alt="EXIT"></img>
                     </button>
 
                     <div className="form-group">
