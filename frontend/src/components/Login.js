@@ -9,10 +9,13 @@ function Login({onExitClick}) {
 
     const app_name = 'g26-big-project'
     function buildPath(route) {
+        console.log("ENVIRONMENT " + process.env.NODE_ENV);
         if (process.env.NODE_ENV === 'production') {
+            console.log('https://' + app_name + '.herokuapp.com/' + route);
             return 'https://' + app_name + '.herokuapp.com/' + route;
         }
         else {
+            console.log('http://localhost:5000/' + route);
             return 'http://localhost:5000/' + route;
         }
     }
@@ -27,25 +30,26 @@ function Login({onExitClick}) {
         try {
 
             // Fetch users id and username
-            const response = await fetch('http://localhost:5000/api/login',
+            const response = await fetch(buildPath("api/login"),
                 { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
 
             var res = JSON.parse(await response.text());
             console.log(res);
+            console.log("HERE");
             
             // If username does not exist display a notice
             if ((res.displayName == '') || (res.displayName == null)) {
                 setMessage('User/Password combination incorrect');
             }
             else {
-                console.log(res.username)
                 var user = { id: res.id, displayName: res.displayName }
                 
                 // Save user id and username in "user_data"
                 localStorage.setItem('user_data', JSON.stringify(user));
 
                 setMessage('');
-               window.location.href = '/LargeProject';
+                console.log("HERE");
+                //window.location.href = '/LargeProject';
             }
         }
         catch (e) {

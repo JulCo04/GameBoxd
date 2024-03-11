@@ -10,6 +10,19 @@ function Register({onExitClick}) {
     const [message, setMessage] = useState('');
     const [showOverlay, setShowOverlay] = useState(true); // State to track overlay visibility
 
+    const app_name = 'g26-big-project'
+    function buildPath(route) {
+        console.log("ENVIRONMENT " + process.env.NODE_ENV);
+        if (process.env.NODE_ENV === 'production') {
+            console.log('https://' + app_name + '.herokuapp.com/' + route);
+            return 'https://' + app_name + '.herokuapp.com/' + route;
+        }
+        else {
+            console.log('http://localhost:5000/' + route);
+            return 'http://localhost:5000/' + route;
+        }
+    }
+
     const doRegister = async event => {
         event.preventDefault();
 
@@ -26,7 +39,8 @@ function Register({onExitClick}) {
 
         try {
             // Register user
-            const response = await fetch('http://localhost:5000/api/register',
+            console.log("Registering....");
+            const response = await fetch(buildPath('api/register'),
                 { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
 
             var res = JSON.parse(await response.text());
