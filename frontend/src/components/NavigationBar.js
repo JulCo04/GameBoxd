@@ -6,7 +6,7 @@ function NavigationBar({ onLoginClick, onRegisterClick }) {
         <div className="blurred-background">
             <nav className="nav bg-primary bg-opacity-25">
                 <Link to="/" className="site-title ps-3 pt-2">
-                    GamerGrid
+                    GameGrid
                 </Link>
                 <ul>
                     <li><button className="text-button" onClick={onLoginClick}>Login</button></li>
