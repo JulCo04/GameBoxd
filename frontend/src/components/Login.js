@@ -53,7 +53,7 @@ function Login({onExitClick}) {
                 res = null;
                 setMessage('');
                 console.log("Registration Complete");
-                //window.location.href = '/LargeProject';
+                window.location.href = '/LargeProject';
             }
         }
         catch (e) {
