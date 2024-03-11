@@ -10,7 +10,7 @@ function Register({onExitClick}) {
     const [message, setMessage] = useState('');
     const [showOverlay, setShowOverlay] = useState(true); // State to track overlay visibility
 
-    const app_name = 'g26-big-project'
+    const app_name = 'g26-big-project-6a388f7e71aa'
     function buildPath(route) {
         console.log("ENVIRONMENT " + process.env.NODE_ENV);
         if (process.env.NODE_ENV === 'production') {
