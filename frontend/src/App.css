@@ -213,3 +213,138 @@
 .login-button:hover {
   background-color: #278889;
 }
+
+/* Top Games CSS*/
+
+.top-games-container {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.page-title {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-button,
+.clear-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filter-button:hover,
+.clear-button:hover {
+  background-color: #0056b3;
+}
+
+.genre-dropdown {
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  margin-right: 10px;
+  background-color: rgb(67, 81, 95, 0.5);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px; /* Adjust the width as needed */
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Set background color of the track */
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(96, 96, 96, 0.5); /* Set background color of the scrollbar */
+  border-radius: 10px; /* Make the scrollbar handle round */
+}
+
+.games-horizontal {
+  display: flex; /* Use flexbox */
+  overflow-x: auto; /* Allow horizontal scrolling if necessary */
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.games-grid {
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Create a responsive grid with minimum item width of 250px */
+  gap: 20px; /* Add gap between grid items */
+  margin-bottom: 20px;
+}
+
+.game-card {
+  flex: 0 0 auto; /* Allow the card to shrink and grow as necessary */
+  margin-right: 10px; /* Adjust as needed */
+  min-width: 250px; /* Set a minimum width for each card */
+}
+
+.game-card h3 {
+  font-size: 14px; /* Adjust text size for game title */
+  margin-top: 10px; /* Adjust spacing between image and title */
+  text-align: center;
+  color: white;
+}
+
+.game-card a {
+  text-decoration: none; /* Remove underline from links */
+}
+
+.game-image {
+  height: 150px; /* Adjust the height to maintain aspect ratio */
+  background-size: cover;
+  background-position: center;
+}
+
+.page-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.current-page {
+  color: white;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Game details page */
+
+.details-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.details-image {
+  width: 300px; /* Adjust size as needed */
+  margin-right: 20px;
+}
+
+.details-content {
+  flex-grow: 1;
+}
+
+.details-reviews {
+  margin-top: 20px;
+  text-decoration: underline;
+}

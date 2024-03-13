@@ -5,7 +5,7 @@ function HomePageInfoBoxes()
 {
     return(
         <div className="row mt-6 justify-items-center ">
-            <p className="text-start mb-n3 text-light fw-semibold">With GamerGrid you can...</p>
+            <p className="text-start mb-n3 text-light fw-semibold">With GameGrid you can...</p>
             <div className="InfoBox col rounded bg-secondary my-4 mx-2">
                 <img className="mx-auto my-3 d-block" src="writing.svg"></img>
                 <p className="BoxText fw-semibold text-center ">Keep track of every game you’ve played, are currently playing, and want to play.</p>

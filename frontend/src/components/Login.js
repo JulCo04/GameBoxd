@@ -51,7 +51,7 @@ function Login({onExitClick}) {
                 console.log("user_data: " + localStorage.getItem('user_data'));
                 setMessage('');
                 console.log("Registration Complete");
-                window.location.href = '/LargeProject';
+                window.location.href = '/LoggedInHomePage';
             }
         }
         catch (e) {

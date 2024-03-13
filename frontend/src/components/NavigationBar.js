@@ -2,6 +2,11 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 function NavigationBar({ onLoginClick, onRegisterClick }) {
+
+    const onGamesClick = () => {
+        window.location.href = '/Games';
+    };
+
     return (
         <div className="blurred-background">
             <nav className="nav bg-primary bg-opacity-25">
@@ -11,7 +16,6 @@ function NavigationBar({ onLoginClick, onRegisterClick }) {
                 <ul>
                     <li><button className="text-button" onClick={onLoginClick}>Login</button></li>
                     <li><button className="text-button" onClick={onRegisterClick}>Create Account</button></li>
-                    <li><Link to="/games">Games</Link></li>
                 </ul>
             </nav>
         </div>

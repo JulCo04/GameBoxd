@@ -1,5 +1,6 @@
 import React from "react";
 import HomePageInfoBoxes from "./HomePageInfoBoxes/HomePageInfoBoxes";
+import PopularGames from "./PopularGames";
 
 function HomePageUI({onLoginClick, onRegisterClick})
 {
@@ -16,12 +17,16 @@ function HomePageUI({onLoginClick, onRegisterClick})
                 </p>
                 <button type="button" className="btn btn-primary text-white fw-semibold" onClick={onRegisterClick}>Create a free account</button><br/>
                 <button type="button" className="btn btn-link fw-light text-white" onClick={onLoginClick}>or <span className="fw-normal">log in</span></button>
+                <PopularGames />
                 <HomePageInfoBoxes />
             </div>
         </div>
 
         </>
     );
+
+
+    
 }
 
 export default HomePageUI;
