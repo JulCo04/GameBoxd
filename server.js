@@ -164,24 +164,32 @@ app.post('/api/reviews', async (req, res, next) => {
     // incoming: userId, videoGameId, rating
     // outgoing: error
 
-    const { videoGameId, rating, textBody} = req.body;
-    const newRating = {
-        videoGameId: videoGameId,
-        rating: rating,
+    const { textBody, rating, videoGameId} = req.body;
+    const newReview = {
+        dateWritten: new Date(), // Set current date as dateCreated
         textBody: textBody,
-        dateWritten: new Date() // Set current date as dateCreated
+        rating: rating,
+        videoGameId: videoGameId
     };
     var error = '';
 
     try {
         const db = client.db("VGReview");
-        const result = db.collection('Reviews').insertOne(newRating);
-        const reviewCount = await db.collection('VideoGames').findOne({ videoGameId: videoGameId }, { $get: { reviewCount: reviewCount } });
+        const result = db.collection('Reviews').insertOne(newReview);
+        //const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+        // if (result2) {
+        //     const OvrRating = result2.rating;
+        //     const reviewCount = result2.reviewCount;
+        // } else {
+        //     error = 'User not found';
+        // }
     } catch (e) {
         error = e.toString();
     }
 
-    var ret = { reviewCount: reviewCount, error: error };
+    var ret = { error: error };
+    //var ret = { ratings: ratings, error: error };
+    //var ret = { reviewCount: reviewCount, error: error };
     res.status(200).json(ret);
 });
 
