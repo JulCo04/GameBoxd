@@ -178,8 +178,9 @@ app.post('/api/reviews', async (req, res, next) => {
         const result = db.collection('Reviews').insertOne(newReview);
         const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
         if (result2) {
-            const ovrRating = result2.rating;
-            const reviewCount = result2.reviewCount;
+            //const ovrRating = result2.rating;
+            //const reviewCount = result2.reviewCount;
+            error = 'Game found';
         } else {
             error = 'Game not found';
         }
@@ -187,7 +188,8 @@ app.post('/api/reviews', async (req, res, next) => {
         error = e.toString();
     }
 
-    var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
+    var ret = { error: error};
+    //var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
     res.status(200).json(ret);
 });
 
