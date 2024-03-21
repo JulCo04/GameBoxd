@@ -178,8 +178,8 @@ app.post('/api/reviews', async (req, res, next) => {
         const result = db.collection('Reviews').insertOne(newReview);
         const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
         if (result2) {
-            //const ovrRating = result2.rating;
-            //const reviewCount = result2.reviewCount;
+            const ovrRating = result2.rating;
+            const reviewCount = result2.reviewCount;
             error = 'Game found';
             var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
         } else {
