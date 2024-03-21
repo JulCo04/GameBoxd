@@ -176,13 +176,13 @@ app.post('/api/reviews', async (req, res, next) => {
     try {
         const db = client.db("VGReview");
         const result = db.collection('Reviews').insertOne(newReview);
-        //const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
-        // if (result2) {
-        //     const OvrRating = result2.rating;
-        //     const reviewCount = result2.reviewCount;
-        // } else {
-        //     error = 'User not found';
-        // }
+        const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+        if (result2) {
+            const OvrRating = result2.rating;
+            const reviewCount = result2.reviewCount;
+        } else {
+            error = 'Game not found';
+        }
     } catch (e) {
         error = e.toString();
     }
