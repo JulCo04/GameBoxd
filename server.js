@@ -160,6 +160,31 @@ app.post('/api/deleteuser', async (req, res, next) => {
     res.status(200).json(ret);
 });*/
 
+app.post('/api/reviews', async (req, res, next) => {
+    // incoming: userId, videoGameId, rating
+    // outgoing: error
+
+    const { videoGameId, rating, textBody} = req.body;
+    const newRating = {
+        videoGameId: videoGameId,
+        rating: rating,
+        textBody: textBody,
+        dateWritten: new Date() // Set current date as dateCreated
+    };
+    var error = '';
+
+    try {
+        const db = client.db("VGReview");
+        const result = db.collection('Reviews').insertOne(newRating);
+        const reviewCount = await db.collection('VideoGames').findOne({ videoGameId: videoGameId }, { $get: { reviewCount: reviewCount } });
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { reviewCount: reviewCount, error: error };
+    res.status(200).json(ret);
+});
+
 app.listen(PORT, () => {
     console.log('Server listening on port ' + PORT);
 });
