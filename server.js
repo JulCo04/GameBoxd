@@ -181,15 +181,15 @@ app.post('/api/reviews', async (req, res, next) => {
             //const ovrRating = result2.rating;
             //const reviewCount = result2.reviewCount;
             error = 'Game found';
+            var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
         } else {
             error = 'Game not found';
+            var ret = { error: error};
         }
     } catch (e) {
         error = e.toString();
     }
 
-    var ret = { error: error};
-    //var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
     res.status(200).json(ret);
 });
 
