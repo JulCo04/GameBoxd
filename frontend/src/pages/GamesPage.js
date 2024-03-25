@@ -2,114 +2,143 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LoggedInNavBar from '../components/LoggedInNavBar';
 
-const genresData = [
-  { id: 4, name: 'Action', slug: 'action' },
-  { id: 51, name: 'Indie', slug: 'indie' },
-  { id: 3, name: 'Adventure', slug: 'adventure' },
-  { id: 10, name: 'Strategy', slug: 'strategy' },
-  { id: 2, name: 'Shooter', slug: 'shooter' },
-  { id: 40, name: 'Casual', slug: 'casual' },
-  { id: 14, name: 'Simulation', slug: 'simulation' },
-  { id: 7, name: 'Puzzle', slug: 'puzzle' },
-  { id: 11, name: 'Arcade', slug: 'arcade' },
-  { id: 83, name: 'Platformer', slug: 'platformer' },
-  { id: 1, name: 'Racing', slug: 'racing' },
-  { id: 59, name: 'Massively Multiplayer', slug: 'massively-multiplayer' },
-  { id: 15, name: 'Sports', slug: 'sports' },
-  { id: 6, name: 'Fighting', slug: 'fighting' },
-  { id: 19, name: 'Family', slug: 'family' },
-  { id: 28, name: 'Board Games', slug: 'board-games' },
-  { id: 34, name: 'Educational', slug: 'educational' },
-  { id: 17, name: 'Card', slug: 'card' }
-];
-
 const GamesPage = () => {
   const [games, setGames] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const pageSize = 12;
-  const API_KEY = process.env.API_KEY
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [selectedGenre, setSelectedGenre] = useState(""); // Track selected genre
+  const [searchTerm, setSearchTerm] = useState(""); // Track search term
+
+  // Add genres
+  const genres = ["Shooter", "Adventure", "Role-playing (RPG)", "Puzzle", 
+                  "Turn-based strategy (TBS)", "Indie", "Arcade", "Racing", 
+                  "Sport", "Strategy", "Fighting"]; // Add more genres as needed
+
   useEffect(() => {
-    loadGames();
-  }, [currentPage, filter, selectedGenre]);
+    fetchGames();
+  }, [page, selectedGenre, searchTerm]); // Trigger fetchGames on page or genre change
 
-  async function loadGames() {
-    let url = `https://api.rawg.io/api/games?key=7c58f099418e411c90980dce79d165f2&page_size=${pageSize}&page=${currentPage}`;
+  const nextPage = () => {
+    setPage(page + 1);
+  };
 
-    if (filter) {
-      url += `&dates=${filter}-01-01,${filter}-12-31&ordering=-added`;
+  const previousPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
     }
-    if (selectedGenre) {
-      url += `&genres=${selectedGenre}`;
-    }
+  };
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setGames(data.results);
-    } catch (error) {
-      console.error("An error occurred while fetching games:", error);
-    }
+  const app_name = 'g26-big-project-6a388f7e71aa'
+  function buildPath(route) {
+      console.log("ENVIRONMENT " + process.env.NODE_ENV);
+      if (process.env.NODE_ENV === 'production') {
+          console.log('https://' + app_name + '.herokuapp.com/' + route);
+          return 'https://' + app_name + '.herokuapp.com/' + route;
+      }
+      else {
+          console.log('http://localhost:5000/' + route);
+          return 'http://localhost:5000/' + route;
+      }
   }
 
-  const handleGenreChange = (event) => {
-    setSelectedGenre(event.target.value);
-    setShowFilters(false);
+  const fetchGames = async () => {
+    try {
+        const limit = 15;
+        const offset = limit * (page - 1);
+        const response = await fetch(buildPath("api/games"), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ limit, offset, genre: selectedGenre, search: searchTerm })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch games');
+        }
+
+        const gamesData = await response.json();
+
+        if (searchTerm) {
+          
+          // Sort games by total_rating in descending order
+          // filter out games without total rating
+          const filteredGames = gamesData.filter(game => game.total_rating !== undefined);
+          
+          // Sort filtered games by total_rating in descending order
+          const sortedGames = filteredGames.sort((a, b) => b.total_rating - a.total_rating);
+
+          // Slice the first 15 games
+          const slicedGames = sortedGames.slice(offset, offset + limit);
+          setGames(slicedGames);
+        }
+        else {
+          setGames(gamesData);
+        }
+        
+        
+        
+    } catch (error) {
+        console.error('Error fetching games:', error.message);
+        setError('Failed to fetch games. Please try again later.');
+    }
+};
+
+  const parseCoverUrl = (url) => {
+    return url.replace('t_thumb', 't_cover_big');
   };
 
-  const handleClearFilters = () => {
-    setSelectedGenre('');
-    setShowFilters(true);
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage);
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(currentPage + 1);
+  const clearFilter = () => {
+    setSelectedGenre(""); // Reset selected genre
+    setPage(1); // Reset page to 1
   };
 
   return (
     <div className="page-container">
-      <LoggedInNavBar/>
-      <div className="top-games-container">
-        <h1 className="page-title">Popular Games</h1>
-        <div className="filter-container">
-          <button className="filter-button" onClick={() => setShowFilters(!showFilters)}>Filter by Genre</button>
-          {showFilters && (
-            <select className="genre-dropdown" value={selectedGenre} onChange={handleGenreChange}>
-              <option value="">Select Genre</option>
-              {genresData.map(genre => (
-                <option key={genre.id} value={genre.slug}>{genre.name}</option>
-              ))}
-            </select>
-          )}
-          {selectedGenre && (
-            <button className="clear-button" onClick={handleClearFilters}>Clear Filter</button>
-          )}
-        </div>
-        <div className="games-grid">
-          {games.map(game => (
-            <div className="game-card" key={game.id}>
-              <Link to={`/games/${game.name}`}>
-                <div className="game-image" style={{ backgroundImage: `url(${game.background_image})` }}></div>
-                <h3>{game.name}</h3>
-                
-              </Link>
+        <LoggedInNavBar />
+        <div className="top-games-container">
+            <h1 className="page-title">Games</h1>
+            <div className="filter-container">
+                <input
+                  className="games-search-bar"
+                  type="text"
+                  placeholder="Search Game"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term state
+                />
+                <select className="genre-dropdown" onChange={(e) => setSelectedGenre(e.target.value)} value={selectedGenre}>
+                    <option value="">Select Genre</option>
+                    {genres.map((genre, index) => (
+                        <option key={index} value={genre}>{genre}</option>
+                    ))}
+                </select>
+                <button className="clear-button" onClick={clearFilter}>Clear Filter</button>
             </div>
-          ))}
+            <div className="games-grid">
+                {games.map((game) => (
+                    <div className="game-card" key={game.id}>
+                        <Link to={{
+                            pathname: `/games/${game.name}/${game.id}`,    
+                        }}>
+                            <div
+                                className="game-image"
+                                style={{
+                                    backgroundImage: `url(${game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'})`, // Check if cover exists before accessing url
+                                }}
+                            ></div>
+                            <h3>{game.name}</h3>
+                        </Link>
+                    </div>
+                ))}
+            </div>
+            <div className="pagination">
+                <button className="page-button" onClick={previousPage} disabled={page === 1}> Previous </button>
+                <button className="page-button" onClick={nextPage}>Next</button>
+                <span className="current-page"> Page {page}</span>
+            </div>
         </div>
-        <div className="pagination">
-          <button className="page-button" onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-          <button className="page-button" onClick={handleNextPage}>Next</button>
-          <span className="current-page">Page {currentPage}</span>
-        </div>
-      </div>
     </div>
-  );
+);
 }
 
 export default GamesPage;

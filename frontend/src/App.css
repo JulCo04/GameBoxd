@@ -217,8 +217,23 @@
 /* Top Games CSS*/
 
 .top-games-container {
+  margin-left: 250px;
+  margin-right: 250px;
   padding: 20px;
   border-radius: 10px;
+}
+
+.games-search-bar {
+  width: 300px; /* Adjust width as needed */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.games-search-bar:focus {
+  outline: none;
+  border-color: #007bff; /* Change color on focus */
 }
 
 .page-title {
@@ -305,7 +320,7 @@
 }
 
 .game-image {
-  height: 150px; /* Adjust the height to maintain aspect ratio */
+  height: 350px;
   background-size: cover;
   background-position: center;
 }
@@ -330,21 +345,35 @@
 
 .details-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 50px;
+  align-items: flex-start;
+  margin-top: 250px;
+  margin-left: 500px;
+  margin-right: 500px;
 }
 
 .details-image {
-  width: 300px; /* Adjust size as needed */
+  width: auto; /* Adjust as needed */
+  height: auto; /* Maintain aspect ratio */
   margin-right: 20px;
 }
 
 .details-content {
-  flex-grow: 1;
+  flex: 1;
+}
+
+.details-content h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.details-content p {
+  font-size: 16px;
+  color: #ffffff; /* White text color */
 }
 
 .details-reviews {
+  font-size: 18px;
   margin-top: 20px;
-  text-decoration: underline;
+  color: #ffffff; /* White text color */
 }

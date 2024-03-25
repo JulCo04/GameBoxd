@@ -16,7 +16,7 @@ function App() {
         <Route path="/" index element={<LoginPage />} />
         <Route path="/LoggedInHomePage" index element={<LoggedInHomePage/>} />
         <Route path="/Games" index element={<GamesPage/>} />
-        <Route path="/games/:gameName" index element={<GameDetailsPage/>} />
+        <Route path="/games/:gameName/:gameId" index element={<GameDetailsPage/>} />
       </Routes>
     </BrowserRouter>
   );

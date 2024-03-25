@@ -218,6 +218,101 @@ app.post('/api/deleteuser', async (req, res, next) => {
     res.status(200).json(ret);
 });*/
 
+const clientID = "3xkf3mqu8ca2j83dwpurhsr69ck7b3";
+const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
+
+app.post('/api/games', async (req, res) => {
+    try {
+        const { limit, offset, genre, search } = req.body; // Receive genre and search term from request body
+
+        let query = `
+            fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
+            offset ${offset};
+        `;
+
+        if (search) { // If search term is provided, add it to the query
+            query += `search "${search}";
+                      limit 500;`;
+        } else if (genre) { // If genre is provided, add it to the query
+            query += `where total_rating_count > 100 & genres.name = "${genre}";
+                      limit ${limit};`;
+        } else { // If neither search nor genre is provided, include sorting and filtering
+            query += `
+                where total_rating_count > 100;
+                sort total_rating_count desc;
+                sort total_rating desc;
+                sort first_release_date desc;
+                limit ${limit};
+            `;
+        }
+
+        const response = await fetch('https://api.igdb.com/v4/games', {
+            method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Client-ID": clientID,
+                Authorization: `Bearer ${authorization}`
+            },
+            body: query
+        });
+
+        console.log("REQ: ", req.body);
+        console.log("QUERY: ", query);
+
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch games');
+        }
+
+        const games = await response.json();
+        res.json(games);
+    } catch (error) {
+        console.error('Error fetching games:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.post('/api/games/gameName', async (req, res) => {
+    
+    
+    try {
+
+        const { gameName, gameId } = req.body; 
+
+        let query = `
+            fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
+            where id = ${gameId};
+            limit 1;
+        `;
+
+      
+        console.log("GAME-NAME: ", gameName);
+        console.log("GAME-ID: ", gameId);
+  
+  
+      const response = await fetch('https://api.igdb.com/v4/games', {
+        method: 'POST',
+        headers: {
+          Accept: "application/json",
+          "Client-ID": clientID,
+          Authorization: `Bearer ${authorization}`
+        },
+        body: query
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch game details');
+      }
+  
+      const games = await response.json();
+      console.log(games);
+      res.json(games);
+    } catch (error) {
+      console.error('Error fetching game details:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log('Server listening on port ' + PORT);
 });
