@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LoggedInNavBar from '../components/LoggedInNavBar';
+import GamesGridUI from '../components/GamesGridUI';
 
 const GamesPage = () => {
   const [games, setGames] = useState([]);
@@ -94,47 +95,31 @@ const GamesPage = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container text-white">
         <LoggedInNavBar />
         <div className="top-games-container">
-            <h1 className="page-title">Games</h1>
+            <h1 className="display-3 fw-bold">Games</h1>
             <div className="filter-container">
                 <input
-                  className="games-search-bar"
+                  className="games-search-bar me-2 fs-5 fw-semibold"
                   type="text"
                   placeholder="Search Game"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)} // Update search term state
                 />
-                <select className="genre-dropdown" onChange={(e) => setSelectedGenre(e.target.value)} value={selectedGenre}>
+                <select className="genre-dropdown fs-5 fw-semibold" onChange={(e) => setSelectedGenre(e.target.value)} value={selectedGenre}>
                     <option value="">Select Genre</option>
                     {genres.map((genre, index) => (
                         <option key={index} value={genre}>{genre}</option>
                     ))}
                 </select>
-                <button className="clear-button" onClick={clearFilter}>Clear Filter</button>
+                <button className="clear-button fs-5 fw-semibold" onClick={clearFilter}>Clear Filter</button>
             </div>
-            <div className="games-grid">
-                {games.map((game) => (
-                    <div className="game-card" key={game.id}>
-                        <Link to={{
-                            pathname: `/games/${game.name}/${game.id}`,    
-                        }}>
-                            <div
-                                className="game-image"
-                                style={{
-                                    backgroundImage: `url(${game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'})`, // Check if cover exists before accessing url
-                                }}
-                            ></div>
-                            <h3>{game.name}</h3>
-                        </Link>
-                    </div>
-                ))}
-            </div>
-            <div className="pagination">
-                <button className="page-button" onClick={previousPage} disabled={page === 1}> Previous </button>
-                <button className="page-button" onClick={nextPage}>Next</button>
-                <span className="current-page"> Page {page}</span>
+            <GamesGridUI games={games}/>
+            <div className="pagination justify-content-center mb-5">
+                <button className="page-button fs-5 fw-semibold" onClick={previousPage} disabled={page === 1}> Previous </button>
+                <button className="page-button fs-5 fw-semibold" onClick={nextPage}>Next</button>
+                <span className="current-page fs-5 fw-semibold"> Page {page}</span>
             </div>
         </div>
     </div>
