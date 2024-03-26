@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import LoggedInNavBar from '../components/LoggedInNavBar';
+import GameDetails from '../components/GameDetails';
 
 const app_name = 'g26-big-project-6a388f7e71aa'
   function buildPath(route) {
@@ -63,14 +64,11 @@ const GameDetailPage = () => {
   return (
     <div className="page-container"> 
       <LoggedInNavBar />
-      <div className="details-container">
-        <img className="details-image" src={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'} alt={game.name} />
-        <div className="details-content">
-          <h1>{game.name}</h1>
-          <p>{game.summary}</p> {/* Display summary */}
-          <div className="details-reviews">Reviews</div>
-        </div>
-      </div>
+      <GameDetails
+        gameName={game.name}
+        gameSummary={game.summary}
+        gameImage={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
+      />
     </div>
   );
 };
