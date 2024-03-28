@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 
 function NavigationBar({ onLoginClick, onRegisterClick }) {
 
-    const onGamesClick = () => {
-        window.location.href = '/Games';
-    };
 
     return (
         <div className="blurred-background">

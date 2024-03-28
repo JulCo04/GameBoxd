@@ -47,7 +47,6 @@ function Login({onExitClick}) {
                 
                 // Save user id and username in "user_data"
                 localStorage.setItem('user_data', JSON.stringify(user));
-
                 console.log("user_data: " + localStorage.getItem('user_data'));
                 setMessage('');
                 console.log("Registration Complete");
@@ -72,7 +71,7 @@ function Login({onExitClick}) {
                 <div className="form-container">
 
                     <button className="exit-button" onClick={handleExitButtonClick}>
-                        <img src="x-button.png" alt="EXIT"></img>
+                        <img src="/x-button.png" alt="EXIT"></img>
                     </button>
 
                     <div className="form-group">

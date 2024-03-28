@@ -234,7 +234,10 @@ app.post('/api/games', async (req, res) => {
             query += `search "${search}";
                       limit 500;`;
         } else if (genre) { // If genre is provided, add it to the query
-            query += `where total_rating_count > 100 & genres.name = "${genre}";
+            query += `sort total_rating_count desc;
+                      sort total_rating desc;
+                      sort first_release_date desc;
+                      where total_rating_count > 100 & genres.name = "${genre}";
                       limit ${limit};`;
         } else { // If neither search nor genre is provided, include sorting and filtering
             query += `
