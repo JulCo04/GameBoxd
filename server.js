@@ -83,7 +83,6 @@ app.get('/api/verify', async (req, res) => {
         const user = await db.collection('Users').findOne({ verificationToken: token });
 
         if (user) {
-            // Update user's verified status to true
             await db.collection('Users').updateOne(
                 { _id: user._id },
                 { $set: { verified: true, verificationToken: null } }
@@ -106,7 +105,7 @@ async function sendVerificationEmail(email, verificationToken) {
         from: 'gamegridmail@gmail.com',
         to: email,
         subject: 'Account Verification',
-        html: `<p>Click the following link to verify your account: <a href="http://localhost:3000/api/verify?token=${verificationToken}">Verify Email</a></p>`
+        html: `<p>Click the following link to verify your account: <a href="https://g26-big-project-6a388f7e71aa.herokuapp.com/api/verify?token=${verificationToken}">Verify Email</a></p>`
     };
 
     try {
