@@ -72,23 +72,26 @@ app.post('/api/register', async (req, res, next) => {
 
 app.post('/api/login', async (req, res, next) => {
     // incoming: email, password
-    // outgoing: id, displayName, error
+    // outgoing: id, displayName, email, dateCreated, error
     var error = '';
     const { email, password } = req.body;
     const db = client.db("VGReview");
-    const results = await
-        db.collection('Users').find({ email: email, password: password }).toArray();
-    var username = '';
+    const results = await db.collection('Users').find({ email: email, password: password }).toArray();
     var _id = -1;
     var displayName = '';
+    var userEmail = '';
+    var dateCreated = '';
+    
     if (results.length > 0) {
         displayName = results[0].displayName;
         _id = results[0]._id;
+        userEmail = results[0].email;
+        dateCreated = results[0].dateCreated; 
     }
-    var ret = { id: _id, displayName: displayName, error: '' };
+    
+    var ret = { id: _id, displayName: displayName, email: userEmail, dateCreated: dateCreated, error: '' };
     res.status(200).json(ret);
 });
-
 app.post('/api/updateuser', async (req, res, next) => {
     // incoming: email (as identifier), new email, new password, new displayname
     // outgoing: error
