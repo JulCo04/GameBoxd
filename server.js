@@ -128,15 +128,23 @@ app.post('/api/login', async (req, res, next) => {
     var dateCreated = '';
     
     if (results.length > 0) {
-        displayName = results[0].displayName;
-        _id = results[0]._id;
-        userEmail = results[0].email;
-        dateCreated = results[0].dateCreated; 
+        const user = results[0];
+        if (!user.verified) {
+            error = 'Please verify your email before logging in.';
+        } else {
+            displayName = user.displayName;
+            _id = user._id;
+            userEmail = user.email;
+            dateCreated = user.dateCreated;
+        }
+    } else {
+        error = 'Invalid email or password.';
     }
     
-    var ret = { id: _id, displayName: displayName, email: userEmail, dateCreated: dateCreated, error: '' };
+    var ret = { id: _id, displayName: displayName, email: userEmail, dateCreated: dateCreated, error: error };
     res.status(200).json(ret);
 });
+
 app.post('/api/updateuser', async (req, res, next) => {
     // incoming: email (as identifier), new email, new password, new displayname
     // outgoing: error
