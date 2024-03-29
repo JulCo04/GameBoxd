@@ -26,94 +26,31 @@ app.use((req, res, next) => {
     next();
 });
 
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-
-// Function to generate a verification token
-function generateVerificationToken() {
-    return crypto.randomBytes(20).toString('hex');
-}
-
-// Nodemailer configuration
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'your-email@gmail.com',
-        pass: 'your-email-password'
-    }
-});
-
 app.post('/api/register', async (req, res, next) => {
-    const { email, password, displayName } = req.body;
-    const verificationToken = generateVerificationToken(); // Generate verification token
+    // incoming: email, password, displayname
+    // outgoing: error
 
+    const { email, password, displayName } = req.body;
     const newUser = {
         email: email,
         password: password,
         displayName: displayName,
-        dateCreated: new Date(),
-        dateLastLoggedIn: null,
-        verified: false, // Add a verified field
-        verificationToken: verificationToken // Add verification token
+        dateCreated: new Date(), // Set current date as dateCreated
+        dateLastLoggedIn: null // Set to null initially
     };
-
-    let error = '';
+    var error = '';
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Users').insertOne(newUser);
-
-        // Send verification email
-        await sendVerificationEmail(email, verificationToken);
-
+        const result = db.collection('Users').insertOne(newUser);
+        
     } catch (e) {
         error = e.toString();
     }
 
-    const ret = { error: error };
+    var ret = { error: '' };
     res.status(200).json(ret);
 });
-
-// Verification endpoint
-app.get('/api/verify', async (req, res) => {
-    const { token } = req.query;
-
-    try {
-        const db = client.db("VGReview");
-        const user = await db.collection('Users').findOne({ verificationToken: token });
-
-        if (user) {
-            // Update user's verified status to true
-            await db.collection('Users').updateOne(
-                { _id: user._id },
-                { $set: { verified: true, verificationToken: null } }
-            );
-
-            res.send('Account verified successfully. You can now login.');
-        } else {
-            res.status(404).send('Invalid or expired verification token.');
-        }
-    } catch (error) {
-        console.error('Error verifying account:', error);
-        res.status(500).send('Internal server error');
-    }
-});
-
-// Function to send verification email
-async function sendVerificationEmail(email, verificationToken) {
-    const mailOptions = {
-        from: 'mahdyferhat22@gmail.com',
-        to: email,
-        subject: 'Account Verification',
-        html: `<p>Click the following link to verify your account: <a href="http://localhost:3000/api/verify?token=${verificationToken}">Verify Email</a></p>`
-    };
-
-    try {
-        await transporter.sendMail(mailOptions);
-    } catch (error) {
-        console.error('Error sending verification email:', error);
-    }
-}
 
 app.post('/api/login', async (req, res, next) => {
     // incoming: email, password
