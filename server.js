@@ -203,6 +203,12 @@ app.post('/api/friends/send-request', async (req, res) => {
             return;
         }
 
+        // Check if they are already friends
+        if (sender.friends && sender.friends.accepted.includes(friendId)) {
+            res.status(400).json({ error: "Already friends" });
+            return;
+        }
+
         // Update sender's sentRequests and receiver's receivedRequests
         await Promise.all([
             usersCollection.updateOne(
