@@ -28,6 +28,19 @@ app.use((req, res, next) => {
 
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+
+const oauth2Client = new OAuth2(
+    "373417650631-dv7hjo9k8br1u1tt4jkfbevs0rtf2v0g.apps.googleusercontent.com",
+    "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", // Client Secret
+    "https://developers.google.com/oauthplayground" // Redirect URL
+);
+
+oauth2Client.setCredentials({
+    refresh_token: "1//04dHODQ0v_X97CgYIARAAGAQSNwF-L9Ireu2iOJTjnvDS8x-g4MhjT-xRB7rfSX-P4OEpQhow8-g0WfxC-tie23tYw3AH87XU-eQ"
+});
+const accessToken = oauth2Client.getAccessToken()
 
 // Function to generate a verification token
 function generateVerificationToken() {
@@ -38,9 +51,16 @@ function generateVerificationToken() {
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
+        type: "OAuth2",
+        clientId: "373417650631-dv7hjo9k8br1u1tt4jkfbevs0rtf2v0g.apps.googleusercontent.com",
+        clientSecret: "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",
+        refreshToken: "1//04dHODQ0v_X97CgYIARAAGAQSNwF-L9Ireu2iOJTjnvDS8x-g4MhjT-xRB7rfSX-P4OEpQhow8-g0WfxC-tie23tYw3AH87XU-eQ",
         user: 'gamegridmail@gmail.com',
-        pass: 'skja mivz biyv feii '
-    }
+        accessToken: accessToken
+    },
+    tls: {
+        rejectUnauthorized: false
+      }
 });
 
 app.post('/api/register', async (req, res, next) => {
