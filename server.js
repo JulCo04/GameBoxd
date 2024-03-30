@@ -67,24 +67,36 @@ app.post('/api/register', async (req, res, next) => {
     const { email, password, displayName } = req.body;
     const verificationToken = generateVerificationToken(); // Generate verification token
 
-    const newUser = {
-        email: email,
-        password: password,
-        displayName: displayName,
-        dateCreated: new Date(),
-        dateLastLoggedIn: null,
-        verified: false, // Add a verified field
-        verificationToken: verificationToken // Add verification token
-    };
-
     let error = '';
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Users').insertOne(newUser);
 
-        // Send verification email
-        await sendVerificationEmail(email, verificationToken);
+        // Check if the email already exists
+        const existingUser = await db.collection('Users').findOne({ email: email });
+        if (existingUser) {
+            error = 'Email already exists';
+        } else {
+            const newUser = {
+                email: email,
+                password: password,
+                displayName: displayName,
+                dateCreated: new Date(),
+                dateLastLoggedIn: null,
+                verified: false,
+                verificationToken: verificationToken,
+                friends: {
+                    sentRequests: [],
+                    receivedRequests: [],
+                    accepted: []
+                }
+            };
+
+            const result = await db.collection('Users').insertOne(newUser);
+
+            // Send verification email
+            await sendVerificationEmail(email, verificationToken);
+        }
 
     } catch (e) {
         error = e.toString();
@@ -165,6 +177,119 @@ app.post('/api/login', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+const { ObjectId } = require('mongodb');
+
+// Endpoint for sending friend requests
+app.post('/api/friends/send-request', async (req, res) => {
+    const { userId, friendId } = req.body;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Check if the sender and receiver exist
+        const [sender, receiver] = await Promise.all([
+            usersCollection.findOne({ _id: new ObjectId(userId) }),
+            usersCollection.findOne({ _id: new ObjectId(friendId) })
+        ]);
+
+        if (!sender || !receiver) {
+            res.status(404).json({ error: "One or both users not found" });
+            return;
+        }
+
+        // Check if a friend request already exists
+        if (sender.friends && sender.friends.sentRequests.includes(friendId)) {
+            res.status(400).json({ error: "Friend request already sent" });
+            return;
+        }
+
+        // Update sender's sentRequests and receiver's receivedRequests
+        await Promise.all([
+            usersCollection.updateOne(
+                { _id: new ObjectId(userId) },
+                { $addToSet: { "friends.sentRequests": friendId } }
+            ),
+            usersCollection.updateOne(
+                { _id: new ObjectId(friendId) },
+                { $addToSet: { "friends.receivedRequests": userId } }
+            )
+        ]);
+
+        res.status(200).json({ message: "Friend request sent successfully" });
+    } catch (error) {
+        console.error('Error sending friend request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+// Endpoint for accepting friend requests
+app.post('/api/friends/accept-request', async (req, res) => {
+    const { userId, friendId } = req.body;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Check if the sender and receiver exist
+        const [sender, receiver] = await Promise.all([
+            usersCollection.findOne({ _id: new ObjectId(userId) }),
+            usersCollection.findOne({ _id: new ObjectId(friendId) })
+        ]);
+
+        if (!sender || !receiver) {
+            res.status(404).json({ error: "One or both users not found" });
+            return;
+        }
+
+        // Check if the friend request exists
+        if (!receiver.friends || !receiver.friends.receivedRequests.includes(userId)) {
+            res.status(400).json({ error: "No friend request found" });
+            return;
+        }
+
+        // Update sender's and receiver's friend lists
+        await Promise.all([
+            usersCollection.updateOne(
+                { _id: new ObjectId(userId) },
+                { $addToSet: { "friends.accepted": friendId } }
+            ),
+            usersCollection.updateOne(
+                { _id: new ObjectId(friendId) },
+                { 
+                    $addToSet: { "friends.accepted": userId },
+                    $pull: { "friends.receivedRequests": userId }
+                }
+            )
+        ]);
+
+        res.status(200).json({ message: "Friend request accepted successfully" });
+    } catch (error) {
+        console.error('Error accepting friend request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Endpoint for fetching friends list
+app.get('/api/friends/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        const friends = user.friends && user.friends.accepted ? user.friends.accepted : [];
+        res.status(200).json({ friends: friends });
+    } catch (error) {
+        console.error('Error fetching friends list:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.post('/api/updateuser', async (req, res, next) => {
     // incoming: email (as identifier), new email, new password, new displayname
     // outgoing: error
@@ -223,20 +348,21 @@ app.post('/api/updateuser', async (req, res, next) => {
 });
 
 app.post('/api/searchusers', async (req, res, next) => {
-    // incoming: username
+    // incoming: displayName
     // outgoing: user object, error
-    const { username } = req.body;
+    const { displayName } = req.body;
     var error = '';
     var user = null;
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Users').findOne({ username: username });
+        const result = await db.collection('Users').findOne({ displayName: displayName });
 
         if (result) {
             user = {
                 id: result._id,
-                username: result.username,
+                email: result.email,
+                displayName: result.displayName,
                 dateCreated: result.dateCreated,
                 dateLastLoggedIn: result.dateLastLoggedIn
             };
@@ -251,7 +377,6 @@ app.post('/api/searchusers', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-const { ObjectId } = require('mongodb');
 
 app.post('/api/deleteuser', async (req, res, next) => {
     // incoming: id
@@ -277,22 +402,101 @@ app.post('/api/deleteuser', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-/*app.post('/api/searchcards', async (req, res, next) => {
-    // incoming: userId, search
-    // outgoing: results[], error
-    var error = '';
-    const { userId, search } = req.body;
-    var _search = search.trim();
-    const db = client.db('COP4331Cards');
-    const results = await
-        db.collection('Cards').find({ "Card": { $regex: _search + '.*', $options: 'i' } }).toArray();
-    var _ret = [];
-    for (var i = 0; i < results.length; i++) {
-        _ret.push(results[i].Card);
+const jwt = require('jsonwebtoken');
+
+
+// Function to generate a unique token for password reset
+function generateResetToken(email) {
+    return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+}
+
+// Function to verify the reset token
+function verifyResetToken(token) {
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        return decoded.email;
+    } catch (error) {
+        return null;
     }
-    var ret = { results: _ret, error: error };
-    res.status(200).json(ret);
-});*/
+}
+
+// Endpoint for initiating password reset
+app.post('/api/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Check if the user with the provided email exists
+        const user = await usersCollection.findOne({ email: email });
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        // Generate a unique reset token
+        const resetToken = generateResetToken(email);
+
+        // Save the reset token in the user document
+        await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { resetToken: resetToken } }
+        );
+
+        // Send an email with the reset link containing the token
+        const resetLink = `http://localhost:5000/api/reset-password?token=${resetToken}`;
+        const mailOptions = {
+            from: 'gamegridmail@gmail.com',
+            to: email,
+            subject: 'Password Reset',
+            html: `<p>Click the following link to reset your password: <a href="${resetLink}">Reset Password</a></p>`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: "Password reset link sent successfully. Check your email." });
+    } catch (error) {
+        console.error('Error initiating password reset:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Endpoint for resetting password via token
+app.post('/api/reset-password', async (req, res) => {
+    const { token, newPassword } = req.body;
+    const email = verifyResetToken(token);
+
+    if (!email) {
+        res.status(400).json({ error: "Invalid or expired reset token" });
+        return;
+    }
+
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Find the user by email
+        const user = await usersCollection.findOne({ email: email });
+
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        // Update the user's password with the new password
+        await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { password: newPassword, resetToken: null } }
+        );
+
+        res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 
 const clientID = "3xkf3mqu8ca2j83dwpurhsr69ck7b3";
 const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
