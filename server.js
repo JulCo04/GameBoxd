@@ -625,7 +625,7 @@ app.post('/api/reviews', async (req, res, next) => {
             const newRating = (ovrRating * reviewCount + rating) / (reviewCount + 1);
             await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount+1) } });
             error = 'Game found';
-            //var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
+            var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
         } else{
             const newGame = {
                 videoGameId: videoGameId,
