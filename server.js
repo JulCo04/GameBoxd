@@ -617,15 +617,16 @@ app.post('/api/reviews', async (req, res, next) => {
 
     try {
         const db = client.db("VGReview");
-        const result = db.collection('Reviews').insertOne(newReview);
-        const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
-        if (result2) {
-            const ovrRating = result2.rating;
-            const reviewCount = result2.reviewCount;
+        await db.collection('Reviews').insertOne(newReview);
+        const result = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+        if (result) {
+            const ovrRating = result.rating;
+            const reviewCount = result.reviewCount;
             const newRating = ((ovrRating * reviewCount) + rating) / (reviewCount + 1);
+            var ret = { ovrRating: ovrRating, reviewCount: reviewCount, newRating: newRating, userRating: rating, error: error };
             await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount+1) } });
             error = 'Game found';
-            var ret = { ovrRating: ovrRating, reviewCount: reviewCount, newRating: newRating, rating: rating, error: error };
+            //var ret = { ovrRating: ovrRating, reviewCount: reviewCount, newRating: newRating, userRating: rating, error: error };
         } else{
             const newGame = {
                 videoGameId: videoGameId,
