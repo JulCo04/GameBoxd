@@ -602,6 +602,45 @@ app.post('/api/games/gameName', async (req, res) => {
     }
 });
 
+app.post('/api/reviews', async (req, res, next) => {
+    // incoming: userId, videoGameId, rating
+    // outgoing: error
+
+    const { textBody, rating, videoGameId } = req.body;
+    const newReview = {
+        dateWritten: new Date(), // Set current date as dateCreated
+        textBody: textBody,
+        rating: rating,
+        videoGameId: videoGameId
+    };
+    var error = '';
+
+    try {
+        const db = client.db("VGReview");
+        const result = db.collection('Reviews').insertOne(newReview);
+        const result2 = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+        if (result2) {
+            const ovrRating = result2.rating;
+            const reviewCount = result2.reviewCount;
+            const newRating = (ovrRating * reviewCount + rating) / (reviewCount + 1);
+            await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount+1) } });
+            error = 'Game found';
+            //var ret = { ovrRating: ovrRating, reviewCount: reviewCount, error: error };
+        } else{
+            const newGame = {
+                videoGameId: videoGameId,
+                rating: rating,
+                reviewCount: 1
+            };
+            await db.collection('VideoGames').insertOne(newGame);
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    res.status(200).json(ret);
+});
+
 app.listen(PORT, () => {
     console.log('Server listening on port ' + PORT);
 });
