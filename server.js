@@ -60,7 +60,7 @@ const transporter = nodemailer.createTransport({
     },
     tls: {
         rejectUnauthorized: false
-      }
+    }
 });
 
 app.post('/api/register', async (req, res, next) => {
@@ -158,7 +158,7 @@ app.post('/api/login', async (req, res, next) => {
     var displayName = '';
     var userEmail = '';
     var dateCreated = '';
-    
+
     if (results.length > 0) {
         const user = results[0];
         if (!user.verified) {
@@ -172,7 +172,7 @@ app.post('/api/login', async (req, res, next) => {
     } else {
         error = 'Invalid email or password.';
     }
-    
+
     var ret = { id: _id, displayName: displayName, email: userEmail, dateCreated: dateCreated, error: error };
     res.status(200).json(ret);
 });
@@ -261,7 +261,7 @@ app.post('/api/friends/accept-request', async (req, res) => {
             ),
             usersCollection.updateOne(
                 { _id: new ObjectId(friendId) },
-                { 
+                {
                     $addToSet: { "friends.accepted": userId },
                     $pull: { "friends.receivedRequests": userId }
                 }
@@ -562,11 +562,11 @@ app.post('/api/games', async (req, res) => {
 });
 
 app.post('/api/games/gameName', async (req, res) => {
-    
-    
+
+
     try {
 
-        const { gameName, gameId } = req.body; 
+        const { gameName, gameId } = req.body;
 
         let query = `
             fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
@@ -574,31 +574,31 @@ app.post('/api/games/gameName', async (req, res) => {
             limit 1;
         `;
 
-      
+
         console.log("GAME-NAME: ", gameName);
         console.log("GAME-ID: ", gameId);
-  
-  
-      const response = await fetch('https://api.igdb.com/v4/games', {
-        method: 'POST',
-        headers: {
-          Accept: "application/json",
-          "Client-ID": clientID,
-          Authorization: `Bearer ${authorization}`
-        },
-        body: query
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch game details');
-      }
-  
-      const games = await response.json();
-      console.log(games);
-      res.json(games);
+
+
+        const response = await fetch('https://api.igdb.com/v4/games', {
+            method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Client-ID": clientID,
+                Authorization: `Bearer ${authorization}`
+            },
+            body: query
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch game details');
+        }
+
+        const games = await response.json();
+        console.log(games);
+        res.json(games);
     } catch (error) {
-      console.error('Error fetching game details:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error fetching game details:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
@@ -623,17 +623,18 @@ app.post('/api/reviews', async (req, res, next) => {
             const ovrRating = result.rating;
             const reviewCount = result.reviewCount;
             const newRating = ((ovrRating * reviewCount) + rating) / (reviewCount + 1);
-            var ret = { ovrRating: ovrRating, reviewCount: reviewCount, newRating: newRating, userRating: rating, error: error };
-            await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount+1) } });
+            await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount + 1) } });
             error = 'Game found';
-            //var ret = { ovrRating: ovrRating, reviewCount: reviewCount, newRating: newRating, userRating: rating, error: error };
-        } else{
+            var ret = { newRating: newRating, error: error };
+        } else {
             const newGame = {
                 videoGameId: videoGameId,
                 rating: rating,
                 reviewCount: 1
             };
             await db.collection('VideoGames').insertOne(newGame);
+            error = "Game added";
+            var ret = { error: error };
         }
     } catch (e) {
         error = e.toString();
