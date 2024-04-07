@@ -38,7 +38,7 @@ const oauth2Client = new OAuth2(
 );
 
 oauth2Client.setCredentials({
-    refresh_token: "1//04dHODQ0v_X97CgYIARAAGAQSNwF-L9Ireu2iOJTjnvDS8x-g4MhjT-xRB7rfSX-P4OEpQhow8-g0WfxC-tie23tYw3AH87XU-eQ"
+    refresh_token: "1//04wUKyeLvWHlFCgYIARAAGAQSNwF-L9Iry--bYJHLLb7jOocKpO_buS_CvzrNieBi6bhyBPe31qq256LJb_k_Hy1MsbPBVWs1t80"
 });
 const accessToken = oauth2Client.getAccessToken()
 
@@ -54,7 +54,7 @@ const transporter = nodemailer.createTransport({
         type: "OAuth2",
         clientId: "373417650631-dv7hjo9k8br1u1tt4jkfbevs0rtf2v0g.apps.googleusercontent.com",
         clientSecret: "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",
-        refreshToken: "1//04dHODQ0v_X97CgYIARAAGAQSNwF-L9Ireu2iOJTjnvDS8x-g4MhjT-xRB7rfSX-P4OEpQhow8-g0WfxC-tie23tYw3AH87XU-eQ",
+        refreshToken: "1//04wUKyeLvWHlFCgYIARAAGAQSNwF-L9Iry--bYJHLLb7jOocKpO_buS_CvzrNieBi6bhyBPe31qq256LJb_k_Hy1MsbPBVWs1t80",
         user: 'gamegridmail@gmail.com',
         accessToken: accessToken
     },
