@@ -322,12 +322,12 @@ app.post('/api/updateuser', async (req, res, next) => {
             }
 
             // Check and update password
-            if (newPassword) {
+            if (newPassword && newPassword !== user.password) {
                 updateFields.password = newPassword;
             }
 
             // Check and update display name
-            if (newDisplayName) {
+            if (newDisplayName && newDisplayName !== user.displayName) {
                 updateFields.displayName = newDisplayName;
             }
 

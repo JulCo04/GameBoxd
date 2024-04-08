@@ -131,10 +131,12 @@
 
 .form-container {
   position: relative;
-  width: 300px;
+  width: 400px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #83929E;
+  /* background-color: #83929E; */
+  /* background-color: #282c34; */
+  background-color: #40454b;
   border-radius: 3px;
 }
 
@@ -195,9 +197,27 @@
 }
 
 .form-group input {
+  /* border: 1px solid red; */
+  border: 2px solid transparent;
+  background: #4a4f55;
   outline: none; 
 }
+
+.form-group input:focus-within {
+  border: 2px solid #0A9396;
+  background-color: #212529;
+  /* background-color: #61dafb; */
+}
+
+.form-group input:hover {
+  border: 2px solid #0A9396;
+
+}
  
+/* .form-input {
+  color:#0056b3;
+  border:rgba(1, 0, 0, 0.3);
+} */
 
 .submit-button {
   display: block;

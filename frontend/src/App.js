@@ -7,7 +7,7 @@ import LoginPage from './pages/LoginPage';
 import GamesPage from './pages/GamesPage';
 import GameDetailsPage from './pages/GameDetailsPage';
 import LoggedInHomePage from './pages/LoggedInHomePage';
-
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -15,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" index element={<LoginPage />} />
         <Route path="/LoggedInHomePage" index element={<LoggedInHomePage/>} />
+        <Route path="/Profile" index element={<ProfilePage/>}/>
         <Route path="/Games" index element={<GamesPage/>} />
         <Route path="/games/:gameName/:gameId" index element={<GameDetailsPage/>} />
       </Routes>

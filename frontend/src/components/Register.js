@@ -65,28 +65,29 @@ function Register({onExitClick}) {
         showOverlay && (
             <div className="overlay">
                 <div className="form-container">
+                    <h1 className="text-white mb-4 fw-bold">Signup</h1>
 
                     <button className="exit-button" onClick={handleExitButtonClick}>
                         <img src="/x-button.png" alt="EXIT"></img>
                     </button>
 
                     <div className="form-group">
-                        <label>Username</label><br />
-                        <input type="text" id="displayName" placeholder="Username" ref={(c) => displayName = c} /><br />
+                        <label className="fw-semibold fs-4">Username</label><br />
+                        <input className="fs-5" type="text" id="displayName" placeholder="Username" ref={(c) => displayName = c} /><br />
                     </div>
 
                     <div className="form-group"> 
-                        <label>Email</label><br />
-                        <input type="text" id="email" placeholder="Email" ref={(c) => email = c} /><br />
+                        <label className="fw-semibold fs-4">Email</label><br />
+                        <input className="fs-5" type="text" id="email" placeholder="Email" ref={(c) => email = c} /><br />
                     </div>
 
                     <div className="form-group"> 
-                        <label>Password</label><br />
-                        <input type="text" id="password" placeholder="Password" ref={(c) => password = c} /><br />
+                        <label className="fw-semibold fs-4">Password</label><br />
+                        <input className="fs-5" type="text" id="password" placeholder="Password" ref={(c) => password = c} /><br />
                     </div>
 
-                    <input type="submit" id="registerButton" className="submit-button" value="SIGN UP" onClick={doRegister} />
-                    <span id="registerResult">{message}</span>
+                    <input type="submit" id="registerButton" className="btn btn-primary text-white w-100 fs-5" value="Sign Up" onClick={doRegister} />
+                    <span className="text-white" id="registerResult">{message}</span>
                     
                 </div>
             </div>

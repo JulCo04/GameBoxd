@@ -35,7 +35,7 @@ function Login({onExitClick}) {
             console.log("Response: "+response.ok);    
             
             var res = JSON.parse(await response.text());
-            console.log("Registration Fetch Result: " + res.displayName);
+            console.log("Login Fetch Result: " + JSON.stringify(res));
             
             // If username does not exist display a notice
             console.log(res.displayName == '');
@@ -43,13 +43,13 @@ function Login({onExitClick}) {
                 setMessage('User/Password combination incorrect');
             }
             else {
-                var user = { id: res.id, displayName: res.displayName }
+                var user = { id: res.id, displayName: res.displayName, email: res.email, dateCreated: res.dateCreated }
                 
                 // Save user id and username in "user_data"
                 localStorage.setItem('user_data', JSON.stringify(user));
                 console.log("user_data: " + localStorage.getItem('user_data'));
                 setMessage('');
-                console.log("Registration Complete");
+                console.log("Login Complete");
                 window.location.href = '/LoggedInHomePage';
             }
         }
@@ -69,6 +69,7 @@ function Login({onExitClick}) {
         showOverlay && (
             <div className="overlay"> 
                 <div className="form-container">
+                    <h1 className="text-white mb-4 fw-bold">Login</h1>
 
                     <button className="exit-button" onClick={handleExitButtonClick}>
                         <img src="/x-button.png" alt="EXIT"></img>
@@ -76,19 +77,19 @@ function Login({onExitClick}) {
 
                     <div className="form-group">
                         
-                        <label>Email</label><br />
-                        <input type="text" id="email" placeholder="Enter your email"
+                        <label className="fw-semibold fs-4">Email</label><br />
+                        <input className="fs-5" type="text" id="email" placeholder="Enter your email"
                             ref={(c) => email = c} /><br />
 
                     </div>
 
                     <div className="form-group">
-                        <label>Password</label><br />
-                        <input type="password" id="login-password" placeholder="Enter your password"
+                        <label className="fw-semibold fs-4">Password</label><br />
+                        <input className="fs-5" type="password" id="login-password" placeholder="Enter your password"
                             ref={(c) => password = c} /><br />
                     </div>
-                    <input type="submit" className="submit-button" value="Sign in" onClick={doLogin} />
-                    <span id="loginResult">{message}</span>
+                    <input type="submit" className="btn btn-primary text-white w-100 fs-5" value="Log in" onClick={doLogin} />
+                    <span className="text-danger" id="loginResult">{message}</span>
                 </div>
             </div>
         )

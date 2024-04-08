@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 
 function LoggedInNavBar({ onLogoutClick }) {
 
+    const onProfileClick = () => {
+        window.location.href = '/Profile';
+    };
+
     const onGamesClick = () => {
         window.location.href = '/Games';
     };
@@ -23,6 +27,7 @@ function LoggedInNavBar({ onLogoutClick }) {
                     GameGrid
                 </Link>
                 <ul>
+                    <li><button className="text-button" onClick={onProfileClick}>Profile</button></li>
                     <li><button className="text-button" onClick={onGamesClick}>Games</button></li>
                     <li><button className="text-button" onClick={doLogout}>Logout</button></li>
                 </ul>
