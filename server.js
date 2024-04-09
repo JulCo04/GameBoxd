@@ -511,7 +511,7 @@ const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
 
 app.post('/api/games', async (req, res) => {
     try {
-        const { limit, offset, genre, search, new } = req.body; // Receive genre and search term from request body
+        const { limit, offset, genre, search } = req.body; // Receive genre and search term from request body
 
         let query = `
             fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
