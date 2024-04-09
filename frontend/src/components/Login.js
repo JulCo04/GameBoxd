@@ -65,6 +65,10 @@ function Login({onExitClick}) {
         setShowOverlay(false);
     };
 
+    const handleForgotPasswordClick = () => {
+        window.location.href = '/reset-password';
+    };
+
     return (
         showOverlay && (
             <div className="overlay"> 
@@ -88,8 +92,13 @@ function Login({onExitClick}) {
                         <input className="fs-5" type="password" id="login-password" placeholder="Enter your password"
                             ref={(c) => password = c} /><br />
                     </div>
+
                     <input type="submit" className="btn btn-primary text-white w-100 fs-5" value="Log in" onClick={doLogin} />
                     <span className="text-danger" id="loginResult">{message}</span>
+
+                    <div className="form-group d-flex justify-content-center mt-2"> {/* Add d-flex and justify-content-center classes */}
+                        <label className="txt-click" onClick={handleForgotPasswordClick}>Forgot Password?</label><br />
+                    </div>
                 </div>
             </div>
         )

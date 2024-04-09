@@ -49,7 +49,7 @@ const PopularGames = () => {
 
   return (
     <div className='games-horizontal'>
-      <h1 className="page-title" style={{ textAlign: 'left' }}>Popular Games</h1>
+      <h1 className="page-title" style={{ textAlign: 'left' }}>New Games</h1>
       <hr style={{ margin: '5px 0 20px', border: '1px solid #ccc' }} /> {/* Line under Popular Games */}
       <div className="games-scrollable">
         {games.map((game) => (
@@ -72,6 +72,7 @@ const PopularGames = () => {
 }
 
 export default PopularGames;
+
 
 
   

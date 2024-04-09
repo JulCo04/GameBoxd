@@ -435,6 +435,7 @@ app.post('/api/forgot-password', async (req, res) => {
     try {
         // Check if the user with the provided email exists
         const user = await usersCollection.findOne({ email: email });
+        console.log("user", user);
         if (!user) {
             res.status(404).json({ error: "User not found" });
             return;
@@ -442,6 +443,7 @@ app.post('/api/forgot-password', async (req, res) => {
 
         // Generate a unique reset token
         const resetToken = generateResetToken(email);
+        console.log("resetToken", resetToken);
 
         // Save the reset token in the user document
         await usersCollection.updateOne(
@@ -509,7 +511,7 @@ const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
 
 app.post('/api/games', async (req, res) => {
     try {
-        const { limit, offset, genre, search } = req.body; // Receive genre and search term from request body
+        const { limit, offset, genre, search, new } = req.body; // Receive genre and search term from request body
 
         let query = `
             fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
@@ -518,6 +520,7 @@ app.post('/api/games', async (req, res) => {
 
         if (search) { // If search term is provided, add it to the query
             query += `search "${search}";
+                      where total_rating_count > 10;
                       limit 500;`;
         } else if (genre) { // If genre is provided, add it to the query
             query += `sort total_rating_count desc;
@@ -569,7 +572,7 @@ app.post('/api/games/gameName', async (req, res) => {
         const { gameName, gameId } = req.body;
 
         let query = `
-            fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
+            fields name, cover.url, total_rating_count, first_release_date, total_rating, summary, involved_companies.company.name, platforms.name;
             where id = ${gameId};
             limit 1;
         `;
@@ -607,6 +610,7 @@ app.post('/api/reviews', async (req, res, next) => {
     // outgoing: error
 
     const { textBody, rating, videoGameId } = req.body;
+    console.log(req.body);
     const newReview = {
         dateWritten: new Date(), // Set current date as dateCreated
         textBody: textBody,

@@ -44,7 +44,7 @@ const GamesPage = () => {
 
   const fetchGames = async () => {
     try {
-        const limit = 15;
+        const limit = 27;
         const offset = limit * (page - 1);
         const response = await fetch(buildPath("api/games"), {
             method: 'POST',
@@ -116,7 +116,7 @@ const GamesPage = () => {
                 <button className="clear-button fs-5 fw-semibold" onClick={clearFilter}>Clear Filter</button>
             </div>
             <GamesGridUI games={games}/>
-            <div className="pagination justify-content-center mb-5">
+            <div className="pagination justify-content-center mt-3 mb-5">
                 <button className="page-button fs-5 fw-semibold" onClick={previousPage} disabled={page === 1}> Previous </button>
                 <button className="page-button fs-5 fw-semibold" onClick={nextPage}>Next</button>
                 <span className="current-page fs-5 fw-semibold"> Page {page}</span>

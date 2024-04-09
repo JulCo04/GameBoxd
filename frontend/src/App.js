@@ -8,6 +8,7 @@ import GamesPage from './pages/GamesPage';
 import GameDetailsPage from './pages/GameDetailsPage';
 import LoggedInHomePage from './pages/LoggedInHomePage';
 import ProfilePage from './pages/ProfilePage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Profile" index element={<ProfilePage/>}/>
         <Route path="/Games" index element={<GamesPage/>} />
         <Route path="/games/:gameName/:gameId" index element={<GameDetailsPage/>} />
+        <Route path="/reset-password" index element = {<ForgotPasswordPage/>} />
       </Routes>
     </BrowserRouter>
   );

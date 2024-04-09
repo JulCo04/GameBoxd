@@ -100,9 +100,16 @@ const GameDetailPage = () => {
       </div>
 
       <GameDetails
-        gameName={game.name}
-        gameSummary={game.summary}
-        gameImage={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
+        gameName = {gameName}
+        gameId = {gameId}
+        gameSummary = {game.summary}
+        gameImage = {game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
+        gameCreators={game.involved_companies.map(company => (
+          <div key={company.id}>{company.company.name}</div>
+        ))}
+        gamePlatforms={game.platforms.map(platform => (
+          <div key={platform.id}>{platform.name}</div>
+        ))}
       />
     </div>
   );

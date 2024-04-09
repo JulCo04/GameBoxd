@@ -16,18 +16,18 @@ function GamesGridUI({games}) {
           <Link to={{
             pathname: `/games/${game.name}/${game.id}`,
           }}>
-            <div
-              className="game-image"
-              style={{
-                backgroundImage: `url(${game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'})`, // Check if cover exists before accessing url
-              }}
-            ></div>
-            <h3 className="fs-5">{game.name}</h3>
+            <img
+            src={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
+            alt={game.name}
+            className="img-fluid"
+
+            />
           </Link>
         </div>
       ))}
     </div>
   );
 }
+
 
 export default GamesGridUI;
