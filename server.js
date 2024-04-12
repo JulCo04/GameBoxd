@@ -647,6 +647,39 @@ app.post('/api/reviews', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+app.post('/api/addGame', async (req, res, next) => {
+    // incoming: email, videoGameId
+    // outgoing: error
+
+    const { email, videoGameId } = req.body;
+    var error = '';
+
+    try {
+        const db = client.db("VGReview");
+        const result = await db.collection('Users').findOne({ email: email });
+        const gameFind = await db.collection('Users').findOne({ email: email, videoGameId: videoGameId });
+        if (result) {
+            if (gameFind) {
+                error = "Game already in library!"
+            } else {
+                //add game to library
+                result.updateOne(
+                    { email: email },
+                    { $push: { games: videoGameId } }
+                );
+                error = "Game successfully added to your library!";
+            }
+        } else {
+            error = "User not found!";
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    var ret = { error: error };
+    res.status(200).json(ret);
+});
+
 app.listen(PORT, () => {
     console.log('Server listening on port ' + PORT);
 });
