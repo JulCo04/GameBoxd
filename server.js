@@ -657,7 +657,7 @@ app.post('/api/addGame', async (req, res, next) => {
     try {
         const db = client.db("VGReview");
         const result = await db.collection('Users').findOne({ email: email });
-        const gameFind = await db.collection('Users').findOne({ email: email, videoGameId: videoGameId });
+        const gameFind = await db.collection('Users').findOne({ email: email }).findOne({ videoGameId: videoGameId });
         const gameCheck = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
 
         //if game isn't in VideoGames, add it
