@@ -699,7 +699,6 @@ app.post('/api/getReviews', async (req, res, next) => {
     } catch (e) {
         error = e.toString();
     }
-
     res.status(200).json(ret);
 });
 
