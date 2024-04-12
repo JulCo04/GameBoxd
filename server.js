@@ -658,6 +658,18 @@ app.post('/api/addGame', async (req, res, next) => {
         const db = client.db("VGReview");
         const result = await db.collection('Users').findOne({ email: email });
         const gameFind = await db.collection('Users').findOne({ email: email, videoGameId: videoGameId });
+        const gameCheck = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+
+        //if game isn't in VideoGames, add it
+        if (!gameCheck) {
+            const newGame = {
+                videoGameId: videoGameId,
+                rating: null,
+                reviewCount: null
+            };
+            await db.collection('VideoGames').insertOne(newGame);
+        }
+
         if (result) {
             if (gameFind) {
                 error = "Game already in library!"
