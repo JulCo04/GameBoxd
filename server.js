@@ -680,6 +680,29 @@ app.post('/api/addGame', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+app.post('/api/getReviews', async (req, res, next) => {
+    // incoming: email, videoGameId
+    // outgoing: error
+
+    const { videoGameId } = req.body;
+    var error = '';
+
+    try {
+        const db = client.db("VGReview");
+        const result = await db.collection('Reviews').find({ videoGameId: videoGameId });
+        if (result) {
+            var ret = { result: result };
+        } else {
+            error = "Game not found!";
+            var ret = { error: error };
+        }
+    } catch (e) {
+        error = e.toString();
+    }
+
+    res.status(200).json(ret);
+});
+
 app.listen(PORT, () => {
     console.log('Server listening on port ' + PORT);
 });
