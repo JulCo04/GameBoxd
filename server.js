@@ -609,7 +609,7 @@ app.post('/api/reviews', async (req, res, next) => {
     // incoming: displayName, videoGameId, rating
     // outgoing: error
 
-    const { textBody, rating, videoGameId } = req.body;
+    const { textBody, rating, videoGameId, displayName } = req.body;
     console.log(req.body);
     const newReview = {
         dateWritten: new Date(), // Set current date as dateCreated
@@ -702,7 +702,7 @@ app.post('/api/getReviews', async (req, res, next) => {
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Reviews').find({ videoGameId: videoGameId }, { _id: 0, textBody: 1, rating: 1, videoGameId});
+        const result = await db.collection('Reviews').find({ videoGameId: videoGameId }, { _id: 0, textBody: 1, rating: 1, videoGameId });
         if (result) {
             var ret = { result: result };
         } else {
