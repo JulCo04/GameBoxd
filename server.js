@@ -606,7 +606,7 @@ app.post('/api/games/gameName', async (req, res) => {
 });
 
 app.post('/api/reviews', async (req, res, next) => {
-    // incoming: userId, videoGameId, rating
+    // incoming: displayName, videoGameId, rating
     // outgoing: error
 
     const { textBody, rating, videoGameId } = req.body;
@@ -615,7 +615,8 @@ app.post('/api/reviews', async (req, res, next) => {
         dateWritten: new Date(), // Set current date as dateCreated
         textBody: textBody,
         rating: rating,
-        videoGameId: videoGameId
+        videoGameId: videoGameId,
+        displayName: displayName
     };
     var error = '';
 
@@ -657,7 +658,7 @@ app.post('/api/addGame', async (req, res, next) => {
     try {
         const db = client.db("VGReview");
         const result = await db.collection('Users').findOne({ email: email });
-        const gameFind = await db.collection('Users').findOne({ email: email }).findOne({ videoGameId: videoGameId });
+        const gameFind = await db.collection('Users').findOne({ email: email }, { videoGameId: videoGameId });
         const gameCheck = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
 
         //if game isn't in VideoGames, add it
@@ -701,7 +702,7 @@ app.post('/api/getReviews', async (req, res, next) => {
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Reviews').find({ videoGameId: videoGameId });
+        const result = await db.collection('Reviews').find({ videoGameId: videoGameId }, { _id: 0, textBody: 1, rating: 1, videoGameId});
         if (result) {
             var ret = { result: result };
         } else {
