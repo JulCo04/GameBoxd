@@ -694,7 +694,7 @@ app.post('/api/addGame', async (req, res, next) => {
 });
 
 app.post('/api/getReviews', async (req, res, next) => {
-    // incoming: email, videoGameId
+    // incoming: videoGameId
     // outgoing: error
 
     const { videoGameId } = req.body;
@@ -704,7 +704,8 @@ app.post('/api/getReviews', async (req, res, next) => {
         const db = client.db("VGReview");
         const result = await db.collection('Reviews').find({ videoGameId: videoGameId }, { _id: 0, textBody: 1, rating: 1, videoGameId });
         if (result) {
-            var ret = { result: result };
+            const reviews = await result.toArray();
+            var ret = { reviews: reviews};
         } else {
             error = "Game not found!";
             var ret = { error: error };
