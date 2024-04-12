@@ -663,7 +663,7 @@ app.post('/api/addGame', async (req, res, next) => {
                 error = "Game already in library!"
             } else {
                 //add game to library
-                result.updateOne(
+                await db.collection('Users').updateOne(
                     { email: email },
                     { $push: { games: videoGameId } }
                 );
