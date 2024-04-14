@@ -9,7 +9,8 @@ function HomePageUI({onLoginClick, onRegisterClick})
 
         <div className="container text-white">
             <div className="col" align="center">
-                <h1 className="display-title fw-bold mt-5 mb-0"><strong>GameGrid</strong></h1>
+                <img src="controllericon1.png" width="250" className="mt-n5 mb-n5"></img>
+                <h1 className="display-title fw-bold mt-0 mb-0"><strong>GameGrid</strong></h1>
                 <p className="fs-3 fw-semibold">
                     Never forget your games <br />
                     Save what you want to play next <br />
