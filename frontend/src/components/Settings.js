@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { redirect } from "react-router-dom";
 
 function Settings({ onExitClick, currentDisplayName, currentEmail }) {
   let newUserPassword = '';
@@ -38,7 +39,7 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
     formErrors["passwords"] = "";
     formErrors["email"] = "";
 
-    if(newPassword !== newPasswordRetype) {
+    if (newPassword !== newPasswordRetype) {
       formErrors["passwords"] = " - Passwords must match";
       formIsValid = false;
     }
@@ -57,12 +58,12 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
     event.preventDefault();
     newUserPassword = userNewPasswordRef.value;
 
-    let obj = { email: currentEmail, newEmail: userEmailInputRef.value, newPassword: newUserPassword, newDisplayName: userDisplayNameInputRef.value};
+    let obj = { email: currentEmail, newEmail: userEmailInputRef.value, newPassword: newUserPassword, newDisplayName: userDisplayNameInputRef.value };
     let js = JSON.stringify(obj);
     console.log("Printing JS: " + js);
     setSuccessMessage('');
 
-    if(userInputValidation(userEmailInputRef.value, userNewPasswordRef.value, userNewPasswordRetypeRef.value)) {
+    if (userInputValidation(userEmailInputRef.value, userNewPasswordRef.value, userNewPasswordRetypeRef.value)) {
 
       try {
         const response = await fetch(buildPath("api/updateuser"),
@@ -72,7 +73,7 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
         let oldUserData = JSON.parse(localStorage.getItem('user_data'));
         // console.log(oldUserData);
         // console.log("OLD USERDATA: " + JSON.stringify(oldUserData));
-        let newUserData = { id: oldUserData.id, displayName: obj.newDisplayName, email: obj.newEmail, dateCreated: oldUserData.dateCreated};
+        let newUserData = { id: oldUserData.id, displayName: obj.newDisplayName, email: obj.newEmail, dateCreated: oldUserData.dateCreated };
         // console.log("NEW USERDATA: " + JSON.stringify(newUserData));
 
         let res = JSON.parse(await response.text());
@@ -93,6 +94,53 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
     else {
 
     }
+  }
+
+  const doDeleteAccount = async () => {
+    console.log("TEST");
+    let userData = JSON.parse(localStorage.getItem('user_data'));
+    let userId = userData.id;
+    let testId = 0;
+
+    let obj = {id: userId};
+    let js = JSON.stringify(obj);
+    console.log("PRINTING JS: " + js);
+
+
+    try {
+      const response = await fetch(buildPath("api/deleteuser"),
+        { method: 'POST', body: js, headers: { 'Content-Type': 'application/json'} });
+      console.log("Response: " + response.ok);
+
+
+      let res = JSON.parse(await response.text())
+      // console.log("Delete User Result: " + JSON.stringify(res));
+
+      if(res.successMessage) {
+        window.alert("Account Deleted");
+        window.location.href = '/';
+        return;
+      }
+      else if(res.error) {
+        window.alert("There was an error: " + res.error);
+        return;
+      }
+    }
+    catch(e) {
+      alert(e.toString());
+      return;
+    }
+
+  }
+
+  const deleteAccountPrompt = () => {
+    let text = "Are you sure you want to delete your account? This action cannot be undone.";
+    
+    if (window.confirm(text) == true) {
+      doDeleteAccount();
+    } else {
+    }
+
   }
 
 
@@ -122,12 +170,15 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
               onChange={(e) => setNewPasswordText(e.target.value)} ref={(c) => userNewPasswordRef = c} /><br />
 
             <label className="fw-semibold fs-4">Retype New Password</label><br />
-            <input className="fs-5" type="password" autoComplete="new-password" id="password"  value={newPasswordRetypeText} placeholder="Retype your new password"
+            <input className="fs-5" type="password" autoComplete="new-password" id="password" value={newPasswordRetypeText} placeholder="Retype your new password"
               onChange={(e) => setNewPasswordRetypeText(e.target.value)} ref={(c) => userNewPasswordRetypeRef = c} /><br />
           </div>
 
 
-          <button className=" btn btn-primary text-white" onClick={doUpdateUser}>Apply</button><br />
+          <div className="row justify-content-between mx-0">
+            <button className="col-auto btn btn-primary text-white mx-0 " onClick={doUpdateUser}>Apply</button><br />
+            <button className="col-auto  btn btn-danger text-white ms-8 " onClick={deleteAccountPrompt}>Delete Account</button><br />
+          </div>
           <div className="text-danger fw-semibold fs-5">{errors["passwords"]}</div>
           <div className="text-danger fw-semibold fs-5">{errors["email"]}</div>
           <div className="text-success fw-semibold fs-5">{successMessage}</div>

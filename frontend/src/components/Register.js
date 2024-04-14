@@ -46,7 +46,7 @@ function Register({onExitClick}) {
             var res = JSON.parse(await response.text());
             console.log(res);
 
-            setMessage('Successfully Registered!');
+            setMessage('Successfully Registered! We have sent you an email to verify your account.');
         }
         catch (e) {
             alert(e.toString());
@@ -87,7 +87,7 @@ function Register({onExitClick}) {
                     </div>
 
                     <input type="submit" id="registerButton" className="btn btn-primary text-white w-100 fs-5" value="Sign Up" onClick={doRegister} />
-                    <span className="text-white" id="registerResult">{message}</span>
+                    <span className="text-white fw-semibold fs-5" id="registerResult">{message}</span>
                     
                 </div>
             </div>
