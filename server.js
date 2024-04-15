@@ -452,7 +452,7 @@ app.post('/api/forgot-password', async (req, res) => {
         );
 
         // Send an email with the reset link containing the token
-        const resetLink = `http://localhost:5000/api/reset-password?token=${resetToken}`;
+        const resetLink = `https://g26-big-project-6a388f7e71aa.herokuapp.com/verify?token=${resetToken}`;
         const mailOptions = {
             from: 'gamegridmail@gmail.com',
             to: email,
