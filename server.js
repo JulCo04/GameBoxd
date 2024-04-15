@@ -581,8 +581,6 @@ app.post('/api/games', async (req, res) => {
 });
 
 app.post('/api/games/gameName', async (req, res) => {
-
-
     try {
 
         const { gameName, gameId } = req.body;
@@ -622,6 +620,70 @@ app.post('/api/games/gameName', async (req, res) => {
 });
 
 app.post('/api/reviews', async (req, res, next) => {
+    try {
+        const { textBody, rating, videoGameId, displayName } = req.body;
+        console.log("Request Body:", req.body);
+
+        // Check if the required data is present in the request body
+        if (!textBody || !rating || !videoGameId || !displayName) {
+            return res.status(400).json({ error: "Missing required data in the request body." });
+        }
+
+        const db = client.db("VGReview");
+        
+        // Check if the user has already reviewed this game
+        const existingReview = await db.collection('Reviews').findOne({
+            videoGameId: videoGameId,
+            displayName: displayName
+        });
+
+        if (existingReview) {
+            // If the user has already reviewed this game, return an error
+            return res.status(400).json({ error: "You have already reviewed this game." });
+        }
+
+        // Insert the new review since the user has not reviewed this game before
+        const newReview = {
+            dateWritten: new Date(),
+            textBody: textBody,
+            rating: rating,
+            videoGameId: videoGameId,
+            displayName: displayName
+        };
+
+        await db.collection('Reviews').insertOne(newReview);
+
+        // Update the game rating in the VideoGames collection
+        const result = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+        if (result) {
+            const ovrRating = result.rating;
+            const reviewCount = result.reviewCount;
+            const newRating = ((ovrRating * reviewCount) + rating) / (reviewCount + 1);
+
+            await db.collection('VideoGames').updateOne(
+                { videoGameId: videoGameId },
+                { $set: { rating: newRating, reviewCount: reviewCount + 1 } }
+            );
+
+            return res.status(200).json({ newRating: newRating, message: "Review submitted successfully." });
+        } else {
+            // If the game doesn't exist in the database, add it
+            const newGame = {
+                videoGameId: videoGameId,
+                rating: rating,
+                reviewCount: 1
+            };
+            await db.collection('VideoGames').insertOne(newGame);
+            return res.status(200).json({ message: "Game added and reviewed." });
+        }
+    } catch (e) {
+        console.error("Failed to submit review:", e);
+        return res.status(500).json({ error: "An error occurred while processing your request." });
+    }
+});
+
+
+/*app.post('/api/reviews', async (req, res, next) => {
     // incoming: displayName, videoGameId, rating
     // outgoing: error
 
@@ -662,7 +724,7 @@ app.post('/api/reviews', async (req, res, next) => {
     }
 
     res.status(200).json(ret);
-});
+});*/
 
 app.post('/api/addGame', async (req, res, next) => {
     // incoming: email, videoGameId
