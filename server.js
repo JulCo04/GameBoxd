@@ -228,7 +228,6 @@ app.post('/api/friends/send-request', async (req, res) => {
     }
 });
 
-
 // Endpoint for accepting friend requests
 app.post('/api/friends/accept-request', async (req, res) => {
     const { userId, friendId } = req.body;
@@ -236,8 +235,8 @@ app.post('/api/friends/accept-request', async (req, res) => {
     const usersCollection = db.collection('Users');
 
     try {
-        // Check if the sender and receiver exist
-        const [sender, receiver] = await Promise.all([
+        // Retrieve both the receiver (user who received the friend request) and sender (user who sent the friend request)
+        const [receiver, sender] = await Promise.all([
             usersCollection.findOne({ _id: new ObjectId(userId) }),
             usersCollection.findOne({ _id: new ObjectId(friendId) })
         ]);
@@ -247,24 +246,24 @@ app.post('/api/friends/accept-request', async (req, res) => {
             return;
         }
 
-        // Check if the friend request exists
-        if (!receiver.friends || !receiver.friends.receivedRequests.includes(userId)) {
+        // Check if the friend request exists in the received requests of the receiver
+        if (!receiver.friends || !receiver.friends.receivedRequests.includes(friendId)) {
             res.status(400).json({ error: "No friend request found" });
             return;
         }
 
-        // Update sender's and receiver's friend lists
+        // Update the friend lists of both users: add to accepted friends for both, and remove from received requests for the receiver
         await Promise.all([
             usersCollection.updateOne(
                 { _id: new ObjectId(userId) },
-                { $addToSet: { "friends.accepted": friendId } }
+                {
+                    $addToSet: { "friends.accepted": friendId },
+                    $pull: { "friends.receivedRequests": friendId }
+                }
             ),
             usersCollection.updateOne(
                 { _id: new ObjectId(friendId) },
-                {
-                    $addToSet: { "friends.accepted": userId },
-                    $pull: { "friends.receivedRequests": userId }
-                }
+                { $addToSet: { "friends.accepted": userId } }
             )
         ]);
 
@@ -275,7 +274,7 @@ app.post('/api/friends/accept-request', async (req, res) => {
     }
 });
 
-// Endpoint for fetching friends list
+
 app.get('/api/friends/:userId', async (req, res) => {
     const userId = req.params.userId;
     const db = client.db("VGReview");
@@ -289,7 +288,24 @@ app.get('/api/friends/:userId', async (req, res) => {
         }
 
         const friends = user.friends && user.friends.accepted ? user.friends.accepted : [];
-        res.status(200).json({ friends: friends });
+
+        // Fetch details of friends using their IDs
+        const friendsDetails = await Promise.all(
+            friends.map(async (friendId) => {
+                const friend = await usersCollection.findOne({ _id: new ObjectId(friendId) });
+                if (friend) {
+                    return {
+                        id: friend._id,
+                        email: friend.email,
+                        displayName: friend.displayName,
+                        // Add more properties as needed
+                    };
+                }
+                return null; // Handle if friend not found
+            })
+        );
+
+        res.status(200).json({ friends: friendsDetails });
     } catch (error) {
         console.error('Error fetching friends list:', error);
         res.status(500).json({ error: 'Internal Server Error' });
