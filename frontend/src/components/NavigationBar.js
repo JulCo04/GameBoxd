@@ -8,7 +8,7 @@ function NavigationBar({ onLoginClick, onRegisterClick }) {
         <div className="blurred-background">
             <nav className="nav bg-primary bg-opacity-25">
                 <Link to="/" className="ps-3 pt-0 py-0" >
-                    <img src="controllericon1.png"  width="60"  className="mb-n2 py-0 my-0 me-2 "></img>
+                    <img src="/controllericon1.png"  width="60"  className="mb-n2 py-0 my-0 me-2 "></img>
                     <span className="site-title">GameGrid</span>
                 </Link>
                 <ul>
