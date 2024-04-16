@@ -682,6 +682,44 @@ app.post('/api/reviews', async (req, res, next) => {
     }
 });
 
+app.post('/api/getRecentReviews', async (req, res, next) => {
+    // incoming: pageSize 
+    // outgoing: error
+
+    const { pageSize = 10 } = req.body;
+    var error = '';
+
+    try {
+        const db = client.db("VGReview");
+        const collection = db.collection('Reviews');
+
+        let skip = 0;
+        let allReviews = [];
+
+        while (true) {
+            const result = await collection
+                .find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(pageSize)
+                .toArray();
+
+            if (result.length === 0) {
+                break; 
+            }
+
+            allReviews = allReviews.concat(result);
+            skip += pageSize;
+        }
+
+        var ret = { recentReviews: allReviews };
+    } catch (e) {
+        error = e.toString();
+        var ret = { error: error };
+    }
+    res.status(200).json(ret);
+});
+
 
 /*app.post('/api/reviews', async (req, res, next) => {
     // incoming: displayName, videoGameId, rating
