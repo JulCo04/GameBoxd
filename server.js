@@ -312,6 +312,42 @@ app.get('/api/friends/:userId', async (req, res) => {
     }
 });
 
+app.get('/api/friends/received-requests/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        const receivedRequests = user.friends && user.friends.receivedRequests ? user.friends.receivedRequests : [];
+
+        // Fetch details of users who sent the friend requests
+        const requestersDetails = await Promise.all(
+            receivedRequests.map(async (requesterId) => {
+                const requester = await usersCollection.findOne({ _id: new ObjectId(requesterId) });
+                if (requester) {
+                    return {
+                        id: requester._id,
+                        displayName: requester.displayName,
+                        
+                    };
+                }
+                return null; // Handle if requester not found
+            })
+        );
+
+        res.status(200).json({ receivedRequests: requestersDetails });
+    } catch (error) {
+        console.error('Error fetching received friend requests:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.post('/api/updateuser', async (req, res, next) => {
     // incoming: email (as identifier), new email, new password, new displayname
     // outgoing: error
@@ -527,7 +563,7 @@ const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
 
 app.post('/api/games', async (req, res) => {
     try {
-        const { limit, offset, genre, search, newReleases } = req.body; // Receive genre, search term, and newReleases flag from request body
+        const { limit, offset, genre, search } = req.body; // Receive genre and search term from request body
 
         let query = `
             fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
@@ -544,15 +580,7 @@ app.post('/api/games', async (req, res) => {
                       sort first_release_date desc;
                       where total_rating_count > 100 & genres.name = "${genre}";
                       limit ${limit};`;
-        } else if (newReleases) { // If newReleases flag is set, fetch new releases from the last two weeks
-            query += `
-                      sort total_rating desc;
-                      sort first_release_date desc;
-                      where total_rating > 75;
-                      limit ${limit};
-                      `;
-            
-        } else { // If neither search, genre, nor newReleases flag is provided, include default sorting and filtering
+        } else { // If neither search nor genre is provided, include sorting and filtering
             query += `
                 where total_rating_count > 100;
                 sort total_rating_count desc;
@@ -575,6 +603,7 @@ app.post('/api/games', async (req, res) => {
         console.log("REQ: ", req.body);
         console.log("QUERY: ", query);
 
+
         if (!response.ok) {
             throw new Error('Failed to fetch games');
         }
@@ -586,7 +615,6 @@ app.post('/api/games', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 app.post('/api/games/gameName', async (req, res) => {
     try {
@@ -687,6 +715,24 @@ app.post('/api/reviews', async (req, res, next) => {
     } catch (e) {
         console.error("Failed to submit review:", e);
         return res.status(500).json({ error: "An error occurred while processing your request." });
+    }
+});
+
+app.get('/api/reviews/search/:displayName', async (req, res) => {
+    const { displayName } = req.params; // Extract the display name from the route parameters
+
+    try {
+        const db = client.db("VGReview");
+        const reviewsCollection = db.collection('Reviews');
+
+        // Search for reviews by display name
+        const reviews = await reviewsCollection.find({ displayName: displayName }).toArray();
+
+        // Send the found reviews in the response
+        res.status(200).json({ reviews: reviews });
+    } catch (error) {
+        console.error('Error searching reviews by display name:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
