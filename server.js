@@ -527,7 +527,7 @@ const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
 
 app.post('/api/games', async (req, res) => {
     try {
-        const { limit, offset, genre, search } = req.body; // Receive genre and search term from request body
+        const { limit, offset, genre, search, newReleases } = req.body; // Receive genre, search term, and newReleases flag from request body
 
         let query = `
             fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
@@ -544,7 +544,15 @@ app.post('/api/games', async (req, res) => {
                       sort first_release_date desc;
                       where total_rating_count > 100 & genres.name = "${genre}";
                       limit ${limit};`;
-        } else { // If neither search nor genre is provided, include sorting and filtering
+        } else if (newReleases) { // If newReleases flag is set, fetch new releases from the last two weeks
+            query += `
+                      sort total_rating desc;
+                      sort first_release_date desc;
+                      where total_rating > 75;
+                      limit ${limit};
+                      `;
+            
+        } else { // If neither search, genre, nor newReleases flag is provided, include default sorting and filtering
             query += `
                 where total_rating_count > 100;
                 sort total_rating_count desc;
@@ -567,7 +575,6 @@ app.post('/api/games', async (req, res) => {
         console.log("REQ: ", req.body);
         console.log("QUERY: ", query);
 
-
         if (!response.ok) {
             throw new Error('Failed to fetch games');
         }
@@ -579,6 +586,7 @@ app.post('/api/games', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 app.post('/api/games/gameName', async (req, res) => {
     try {

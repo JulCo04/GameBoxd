@@ -327,12 +327,12 @@
 
 .games-horizontal {
   width: 50%; /* Adjust the width as per your preference */
-  overflow-x: auto;
   margin: 0 auto; /* Center the container horizontally */
   margin-bottom: 20px;
 }
 
 .games-scrollable {
+  overflow-x: auto;
   display: flex;
   flex-wrap: nowrap;
   gap: 10px; /* Increase the gap between game cards */

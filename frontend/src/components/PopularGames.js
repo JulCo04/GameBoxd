@@ -50,24 +50,24 @@ const PopularGames = () => {
   return (
     <div className='games-horizontal'>
       <h1 className="page-title" style={{ textAlign: 'left' }}>Popular Games</h1>
-      <hr style={{ margin: '5px 0 20px', border: '1px solid #ccc' }} /> {/* Line under Popular Games */}
-      <div className="games-scrollable">
-        {games.map((game) => (
-          <div className="game-card" key={game.id}>
-            <Link to={{
-              pathname: `/games/${game.name}/${game.id}`,
-            }}>
-              <img
-                src={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
-                alt={game.name}
-                className="img-fluid height-10"
-                style={{ maxHeight: '200px' }}
-              />
-            </Link>
-          </div>
-        ))}
-      </div>
+      <div style={{ borderBottom: '1px solid #ccc', margin: '5px 0 20px' }} /> {/* Line under Popular Games */}
+    <div className="games-scrollable">
+      {games.map((game) => (
+        <div className="game-card" key={game.id}>
+          <Link to={{
+            pathname: `/games/${game.name}/${game.id}`,
+          }}>
+            <img
+              src={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
+              alt={game.name}
+              className="img-fluid height-10"
+              style={{ maxHeight: '200px' }}
+            />
+          </Link>
+        </div>
+      ))}
     </div>
+  </div>
   );
 }
 

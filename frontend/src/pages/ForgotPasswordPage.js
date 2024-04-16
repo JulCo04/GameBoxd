@@ -22,6 +22,7 @@ function ForgotPasswordPage({ onBackClick }) {
     }
 
     const handleResetPassword = async () => {
+
         try {
             const response = await fetch(buildPath("api/forgot-password"), {
                 method: 'POST',

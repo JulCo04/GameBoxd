@@ -1,26 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReviewsIU from "./ReviewsUI";
 import StarRating from './StarRating'; // Adjust the path as per your project structure
 
-function GameDetails({ gameName, gameId, gameSummary, gameImage, gameCreators, gamePlatforms }) {
+function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage, gameCreators, gamePlatforms }) {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [showOverlay, setShowOverlay] = useState(false); // Changed initial state to false
+  const [formattedReleaseDate, setFormattedReleaseDate] = useState('');
 
-  const app_name = 'g26-big-project-6a388f7e71aa'
+  const app_name = 'g26-big-project-6a388f7e71aa';
+  console.log(gamePlatforms[0].props.children);
+
+  useEffect(() => {
+    var utcSeconds = gameReleaseDate;
+    var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    d.setUTCSeconds(utcSeconds);
+
+    var date = d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
+    setFormattedReleaseDate(date);
+  }, [gameReleaseDate]);
 
   function buildPath(route) {
-      console.log("ENVIRONMENT " + process.env.NODE_ENV);
-      if (process.env.NODE_ENV === 'production') {
-          console.log('https://' + app_name + '.herokuapp.com/' + route);
-          return 'https://' + app_name + '.herokuapp.com/' + route;
-      }
-      else {
-          console.log('http://localhost:5000/' + route);
-          return 'http://localhost:5000/' + route;
-      }
+    console.log("ENVIRONMENT " + process.env.NODE_ENV);
+    if (process.env.NODE_ENV === 'production') {
+      console.log('https://' + app_name + '.herokuapp.com/' + route);
+      return 'https://' + app_name + '.herokuapp.com/' + route;
+    } else {
+      console.log('http://localhost:5000/' + route);
+      return 'http://localhost:5000/' + route;
+    }
   }
 
   const handleReviewTextChange = (e) => {
@@ -29,31 +43,62 @@ function GameDetails({ gameName, gameId, gameSummary, gameImage, gameCreators, g
 
   const submitReview = async () => {
     try {
-      console.log(reviewText);
-      console.log(rating);
-      console.log(gameId);
+      const userData = localStorage.getItem('user_data');
+      const userDataObj = JSON.parse(userData);
+      const displayName = userDataObj.displayName;
+
+      // Call addGame API to add the game to the user's library
+      const addGameResponse = await fetch(buildPath("api/addGame"), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: userDataObj.email, // Assuming you have the user's email in the localStorage
+          videoGameId: gameId
+        })
+      });
+
+      if (!addGameResponse.ok) {
+        throw new Error('Failed to add game to library');
+      }
+
+      // Submit review after adding the game to the library
       const response = await fetch(buildPath("api/reviews"), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          displayName: displayName,
           textBody: reviewText,
           rating: rating,
-          videoGameId: gameId // You need to define videoGameId
+          videoGameId: gameId
         })
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to submit review');
       }
-  
+
       const data = await response.json();
-      // Handle response, maybe show a success message
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setReviews([...reviews, {
+        displayName: displayName,
+        textBody: reviewText,
+        rating: rating
+      }]);
+
+      toggleOverlay();
     } catch (error) {
-      // Handle error, maybe show an error message
       console.error('Error submitting review:', error);
     }
+
+    window.location.reload();
   };
 
   const toggleReview = () => {
@@ -64,25 +109,26 @@ function GameDetails({ gameName, gameId, gameSummary, gameImage, gameCreators, g
     setShowOverlay(!showOverlay);
   };
 
+  // Extract company names and join them into a single string separated by commas
+  const creatorsString = gameCreators.map(creator => creator.props.children).join(", ");
+  const platformsString = gamePlatforms.map(platform => platform.props.children).join(", ");
+
   return (
     <>
       {showOverlay && (
         <div className="review-overlay"> 
           <div className="review-overlay-content">
             <h1 className="text-white mb-4 fw-bold">Add a Review</h1>
-            
-            
 
             <div className="form-group">
-              {/* Your form elements for review input */}
               <button className="exit-button" onClick={toggleOverlay}>
                 <img src="/x-button.png" alt="EXIT"></img>
               </button>
               <textarea
-              className="form-control mb-3"
-              placeholder="Write your review..."
-              value={reviewText}
-              onChange={handleReviewTextChange}
+                className="form-control mb-3"
+                placeholder="Write your review..."
+                value={reviewText}
+                onChange={handleReviewTextChange}
               />
               <div> 
                 <span className="text-white">Rating</span>
@@ -91,7 +137,6 @@ function GameDetails({ gameName, gameId, gameSummary, gameImage, gameCreators, g
                   onClick={(value) => setRating(value)}
                 />
               </div>
-              
             </div>
 
             <input type="submit" className="btn btn-primary text-white w-100 fs-5" value="Submit Review" onClick={submitReview} />
@@ -99,31 +144,26 @@ function GameDetails({ gameName, gameId, gameSummary, gameImage, gameCreators, g
         </div>
       )}
 
-
       <div className="details-container text-white row px-12 mt-4">
-
-        {/* game image */}
         <div className="col-md-3">
           <img className="rounded w-100" src={gameImage} alt={gameName} />
         </div>
 
-        {/* game description */}
-        <div className="col-md-5">
+        <div className="col-md-6">
           <div className="details-content">
-            <h1 className="display-2 fw-bold text-uppercase">{gameName}</h1>
-            <p className="fs-5">{gameSummary}</p>
+          <h1 className="display-2 fw-bold text-uppercase">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
+            <p className="fs-6">{gameSummary}</p>
             <div>
               <h6>Developed by:</h6>
-              <span>{gameCreators}</span>
+              <span>{creatorsString}</span>
             </div>
             <div>
-              <h6>Platforms:</h6>
-              <span>{gamePlatforms}</span>
+              <h6 style={{ marginTop: '8px' }}>Platforms:</h6>
+              <span>{platformsString}</span>
             </div>
           </div>
         </div>
 
-        {/* review items */}
         <div className="col-md-3 d-flex flex-column justify-content-center align-items-center mx-auto my-auto">
           <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }} onClick={toggleOverlay}>Add a Review</button>
           <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }}>Add to List</button>
@@ -139,24 +179,3 @@ export default GameDetails;
 
 
 
-{/* <button className="btn btn-primary mt-4 text-white" onClick={toggleReview}>
-          {showReview ? 'Close' : 'Make a Review'}
-        </button>
-        {showReview && (
-          <>
-            <textarea
-              className="form-control mb-3"
-              placeholder="Write your review..."
-              value={reviewText}
-              onChange={handleReviewTextChange}
-            />
-            <span>Rating</span>
-            <StarRating
-              value={rating}
-              onClick={(value) => setRating(value)}
-            />
-            <button className="btn btn-primary mt-4" onClick={submitReview}>Submit Review</button>
-            <button className="btn btn-primary mt-4" >Add To Watchlist</button>
-          </>
-        )}
-        <button className="btn btn-primary mt-4 text-white">Add to Watchlist</button> */}

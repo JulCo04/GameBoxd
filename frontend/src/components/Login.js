@@ -66,7 +66,7 @@ function Login({onExitClick}) {
     };
 
     const handleForgotPasswordClick = () => {
-        window.location.href = '/reset-password';
+        window.location.href = '/forgot-password';
     };
 
     return (

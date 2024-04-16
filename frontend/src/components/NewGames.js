@@ -23,12 +23,13 @@ const PopularGames = () => {
     try {
       const limit = 12;
       const offset = 0;
+      const newReleases = true; // Set flag for new releases
       const response = await fetch(buildPath("api/games"), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ limit, offset })
+        body: JSON.stringify({ limit, offset, newReleases }) // Include newReleases flag in request body
       });
 
       if (!response.ok) {
@@ -50,7 +51,7 @@ const PopularGames = () => {
   return (
     <div className='games-horizontal'>
       <h1 className="page-title" style={{ textAlign: 'left' }}>New Games</h1>
-      <hr style={{ margin: '5px 0 20px', border: '1px solid #ccc' }} /> {/* Line under Popular Games */}
+      <div style={{ borderBottom: '1px solid #ccc', margin: '5px 0 20px' }} /> {/* Line under Popular Games */}
       <div className="games-scrollable">
         {games.map((game) => (
           <div className="game-card" key={game.id}>
@@ -72,6 +73,7 @@ const PopularGames = () => {
 }
 
 export default PopularGames;
+
 
 
 

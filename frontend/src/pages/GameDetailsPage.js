@@ -102,6 +102,7 @@ const GameDetailPage = () => {
       <GameDetails
         gameName = {gameName}
         gameId = {gameId}
+        gameReleaseDate = {game.first_release_date}
         gameSummary = {game.summary}
         gameImage = {game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
         gameCreators={game.involved_companies.map(company => (
