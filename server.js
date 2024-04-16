@@ -274,6 +274,41 @@ app.post('/api/friends/accept-request', async (req, res) => {
     }
 });
 
+app.post('/api/friends/reject-request', async (req, res) => {
+    const { userId, friendId } = req.body;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Retrieve both the receiver (user who received the friend request) and sender (user who sent the friend request)
+        const [receiver, sender] = await Promise.all([
+            usersCollection.findOne({ _id: new ObjectId(userId) }),
+            usersCollection.findOne({ _id: new ObjectId(friendId) })
+        ]);
+
+        if (!sender || !receiver) {
+            res.status(404).json({ error: "One or both users not found" });
+            return;
+        }
+
+        // Check if the friend request exists in the received requests of the receiver
+        if (!receiver.friends || !receiver.friends.receivedRequests.includes(friendId)) {
+            res.status(400).json({ error: "No friend request found" });
+            return;
+        }
+
+        // Remove the friend request from the receiver's receivedRequests
+        await usersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $pull: { "friends.receivedRequests": friendId } }
+        );
+
+        res.status(200).json({ message: "Friend request rejected successfully" });
+    } catch (error) {
+        console.error('Error rejecting friend request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.get('/api/friends/:userId', async (req, res) => {
     const userId = req.params.userId;
