@@ -718,6 +718,7 @@ app.post('/api/reviews', async (req, res, next) => {
     }
 });
 
+//Get for given users recent reviews
 app.get('/api/reviews/search/:displayName', async (req, res) => {
     const { displayName } = req.params; // Extract the display name from the route parameters
 
@@ -817,6 +818,30 @@ app.post('/api/getRecentReviews', async (req, res, next) => {
 
     res.status(200).json(ret);
 });*/
+
+app.get('/api/user/games/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Find the user by user ID
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        // Extract the game array from the user object
+        const games = user.games || [];
+
+        res.status(200).json({ games: games });
+    } catch (error) {
+        console.error('Error fetching user games:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.post('/api/addGame', async (req, res, next) => {
     // incoming: email, videoGameId
