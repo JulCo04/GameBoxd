@@ -923,6 +923,37 @@ app.post('/api/addGame', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+app.delete('/api/user/games/:userId/:gameId', async (req, res) => {
+    const { userId, gameId } = req.params; // Extract userId and gameId from the URL parameters
+
+    try {
+        const db = client.db("VGReview");
+        const usersCollection = db.collection('Users');
+
+        // Find the user by user ID
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+
+        // Filter the games array to remove the game with the specified gameId
+        const updatedGames = user.games.filter(game => game !== gameId);
+
+        // Update the user document with the new games array
+        await usersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { games: updatedGames } }
+        );
+
+        res.status(200).json({ message: "Game deleted successfully", games: updatedGames });
+    } catch (error) {
+        console.error('Error deleting game from user:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.post('/api/getReviews', async (req, res, next) => {
     // incoming: videoGameId
     // outgoing: error
