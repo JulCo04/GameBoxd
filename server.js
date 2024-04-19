@@ -822,6 +822,45 @@ app.post('/api/reviews', async (req, res, next) => {
     }
 });
 
+app.put('/api/reviews/edit/:reviewId', async (req, res) => {
+    const { reviewId } = req.params; // Extract the reviewId from the route parameters
+    const { textBody, rating } = req.body; // New review data to update
+
+    try {
+        const db = client.db("VGReview");
+        const reviewsCollection = db.collection('Reviews');
+
+        // Check if the review exists
+        const existingReview = await reviewsCollection.findOne({ _id: new ObjectId(reviewId) });
+        if (!existingReview) {
+            return res.status(404).json({ error: "Review not found." });
+        }
+
+        // Update the review with new data
+        const updatedReview = {
+            ...existingReview,
+            textBody: textBody || existingReview.textBody,
+            rating: rating || existingReview.rating,
+            updatedAt: new Date()
+        };
+
+        // Perform the update operation
+        const result = await reviewsCollection.updateOne(
+            { _id: new ObjectId(reviewId) },
+            { $set: updatedReview }
+        );
+
+        if (result.modifiedCount === 1) {
+            return res.status(200).json({ message: "Review updated successfully." });
+        } else {
+            return res.status(500).json({ error: "Failed to update review." });
+        }
+    } catch (error) {
+        console.error('Error updating review:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 //Get for given users recent reviews
 app.get('/api/reviews/search/:displayName', async (req, res) => {
     const { displayName } = req.params; // Extract the display name from the route parameters
