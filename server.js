@@ -297,15 +297,84 @@ app.post('/api/friends/reject-request', async (req, res) => {
             return;
         }
 
-        // Remove the friend request from the receiver's receivedRequests
-        await usersCollection.updateOne(
-            { _id: new ObjectId(userId) },
-            { $pull: { "friends.receivedRequests": friendId } }
-        );
+        // Perform the updates in one go using bulkWrite to ensure atomicity
+        await usersCollection.bulkWrite([
+            {
+                updateOne: {
+                    filter: { _id: new ObjectId(userId) },
+                    update: { $pull: { "friends.receivedRequests": friendId } }
+                }
+            },
+            {
+                updateOne: {
+                    filter: { _id: new ObjectId(friendId) },
+                    update: { $pull: { "friends.sentRequests": userId } }
+                }
+            }
+        ]);
 
         res.status(200).json({ message: "Friend request rejected successfully" });
     } catch (error) {
         console.error('Error rejecting friend request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.post('/api/friends/remove', async (req, res) => {
+    const { userId, friendId } = req.body;
+    const db = client.db("VGReview");
+    const usersCollection = db.collection('Users');
+
+    try {
+        // Retrieve both the user and the friend to be removed
+        const [user, friend] = await Promise.all([
+            usersCollection.findOne({ _id: new ObjectId(userId) }),
+            usersCollection.findOne({ _id: new ObjectId(friendId) })
+        ]);
+
+        if (!user || !friend) {
+            res.status(404).json({ error: "One or both users not found" });
+            return;
+        }
+
+        // Check if the friend is actually in the user's friends list
+        if (!user.friends || !user.friends.accepted.includes(friendId) ||
+            !friend.friends || !friend.friends.accepted.includes(userId)) {
+            res.status(400).json({ error: "Users are not friends" });
+            return;
+        }
+
+        // Remove the friend from both users' friends lists and any lingering friend requests
+        await usersCollection.bulkWrite([
+            {
+                updateOne: {
+                    filter: { _id: new ObjectId(userId) },
+                    update: {
+                        $pull: {
+                            "friends.accepted": friendId,
+                            "friends.sentRequests": friendId,
+                            "friends.receivedRequests": friendId
+                        }
+                    }
+                }
+            },
+            {
+                updateOne: {
+                    filter: { _id: new ObjectId(friendId) },
+                    update: {
+                        $pull: {
+                            "friends.accepted": userId,
+                            "friends.sentRequests": userId,
+                            "friends.receivedRequests": userId
+                        }
+                    }
+                }
+            }
+        ]);
+
+        res.status(200).json({ message: "Friend and related requests removed successfully" });
+    } catch (error) {
+        console.error('Error removing friend:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
