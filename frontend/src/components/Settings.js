@@ -97,14 +97,12 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
   }
 
   const doDeleteAccount = async () => {
-    console.log("TEST");
     let userData = JSON.parse(localStorage.getItem('user_data'));
     let userId = userData.id;
     let testId = 0;
 
     let obj = {id: userId};
     let js = JSON.stringify(obj);
-    console.log("PRINTING JS: " + js);
 
 
     try {
@@ -147,7 +145,7 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
   return (
     showOverlay && (
       <div className="overlay">
-        <div className="form-container ">
+        <div className="form-container">
           <h1 className="text-white mb-4 fw-bold">Account Settings</h1>
           <button className="exit-button" onClick={handleExitButtonClick}>
             <img src="/x-button.png" alt="EXIT"></img>
@@ -176,8 +174,8 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
 
 
           <div className="row justify-content-between mx-0">
-            <button className="col-auto btn btn-primary text-white mx-0 " onClick={doUpdateUser}>Apply</button><br />
-            <button className="col-auto  btn btn-danger text-white ms-8 " onClick={deleteAccountPrompt}>Delete Account</button><br />
+            <button className="col-auto fw-semibold btn btn-primary text-white mx-0 " onClick={doUpdateUser}>Apply</button><br />
+            <button className="col-auto fw-semibold btn btn-danger text-white ms-8 " onClick={deleteAccountPrompt}>Delete Account</button><br />
           </div>
           <div className="text-danger fw-semibold fs-5">{errors["passwords"]}</div>
           <div className="text-danger fw-semibold fs-5">{errors["email"]}</div>
