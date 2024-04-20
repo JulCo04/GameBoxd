@@ -880,37 +880,26 @@ app.get('/api/reviews/search/:displayName', async (req, res) => {
     }
 });
 
+
 app.post('/api/getRecentReviews', async (req, res, next) => {
-    // incoming: pageSize 
+    // incoming: pageSize
     // outgoing: error
 
-    const { pageSize = 10 } = req.body;
+    const { pageSize = 10 } = req.body;  // Default pageSize is 10 if not specified
     var error = '';
 
     try {
         const db = client.db("VGReview");
         const collection = db.collection('Reviews');
 
-        let skip = 0;
-        let allReviews = [];
+        // Find and sort the reviews in descending order based on the 'dateWritten' field
+        const recentReviews = await collection
+            .find()
+            .sort({ dateWritten: -1 }) // -1 for descending order
+            .limit(pageSize)  // Limit the results to pageSize
+            .toArray();
 
-        while (true) {
-            const result = await collection
-                .find()
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(pageSize)
-                .toArray();
-
-            if (result.length === 0) {
-                break; 
-            }
-
-            allReviews = allReviews.concat(result);
-            skip += pageSize;
-        }
-
-        var ret = { recentReviews: allReviews };
+        var ret = { recentReviews: recentReviews, error: "" };
     } catch (e) {
         error = e.toString();
         var ret = { error: error };
