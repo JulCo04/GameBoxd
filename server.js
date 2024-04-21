@@ -1035,6 +1035,13 @@ app.delete('/api/user/games/:userId/:gameId', async (req, res) => {
             return;
         }
 
+        // Check if the game exists in the user's games array
+        const gameIndex = user.games.indexOf(gameId);
+        if (gameIndex === -1) {
+            res.status(404).json({ error: "Game not found in user's collection" });
+            return;
+        }
+
         // Filter the games array to remove the game with the specified gameId
         const updatedGames = user.games.filter(game => game !== gameId);
 
