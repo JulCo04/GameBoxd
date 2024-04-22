@@ -31,24 +31,14 @@ const ProfileFriendsComponent = ({ formToggler }) => {
     }
   }
 
-  const toggleForm = (form) => {
-    setShowForm(form);
-  }
 
   const fetchFriendRequests = async () => {
-    // let userData = JSON.parse(localStorage.getItem('user_data'));
-    // let userId = userData.id;
-    // console.log(userId);
-
     try {
       const response = await fetch(buildPath("api/friends/received-requests/" + userId));
 
       let res = JSON.parse(await response.text());
       setFriendRequests(res.receivedRequests)
-      // console.log("res.recieved: " + JSON.stringify(res.receivedRequests[0].displayName));
-      // console.log(friendRequests[0].displayName);
-      // console.log(JSON.stringify(res.recievedRequests));
-      // setFriendRequests(JSON.stringify(res.recievedRequests));
+
     } catch (e) {
       alert(e.toString() + "fetchFriendRequests()");
       return;
@@ -57,14 +47,11 @@ const ProfileFriendsComponent = ({ formToggler }) => {
   }
 
   const fetchFriends = async () => {
-    // console.log(userId);
 
     try {
       const response = await fetch(buildPath("api/friends/" + userId));
 
       let res = JSON.parse(await response.text());
-      // console.log(JSON.stringify(res));
-      // console.log(res.friends[0].displayName);
       setFriends(res.friends);
     } catch (e) {
       alert(e.toString() + "fetchFriends()");
@@ -95,7 +82,6 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       }
 
       if (res.message) {
-        console.log(res.message);
         fetchFriendRequests();
         fetchFriends();
       }
@@ -129,7 +115,6 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       }
 
       if (res.message) {
-        console.log(res.message);
         fetchFriendRequests();
         fetchFriends();
       }
@@ -145,8 +130,6 @@ const ProfileFriendsComponent = ({ formToggler }) => {
   const removeFriend = async (friendId) => {
     let obj = { userId: userId, friendId: friendId };
     let js = JSON.stringify(obj);
-
-    console.log("removeFriend js: " + js);
 
     try {
       const response = await fetch(buildPath("api/friends/remove"), {
@@ -165,7 +148,6 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       }
 
       if (res.message) {
-        console.log(res.message);
         fetchFriendRequests();
         fetchFriends();
       }
@@ -175,7 +157,6 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       alert(e.toString() + "in removeFriend()");
       return;
     }
-
 
   }
 
@@ -201,7 +182,7 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       </div>
 
       <hr className="mt-2 opacity-50" />
-      <div className="">
+      <div className="overflow-scroll" style={{height: '60vh'}}>
         {friendRequests.map((friendRequest) => (
           <div className="d-flex justify-content-between mb-3">
             <div className=""> 
