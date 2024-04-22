@@ -1111,6 +1111,29 @@ app.delete('/api/user/games/:userId/:gameId', async (req, res) => {
     }
 });
 
+app.get('/api/reviews/stats/:videoGameId', async (req, res) => {
+    const { videoGameId } = req.params; // Extract the videoGameId from the route parameters
+
+    try {
+        const db = client.db("VGReview");
+        const videoGamesCollection = db.collection('VideoGames');
+
+        // Find the game based on videoGameId
+        const game = await videoGamesCollection.findOne({ videoGameId: videoGameId });
+
+        if (!game) {
+            return res.status(404).json({ error: "Game not found." });
+        }
+
+        // Respond with the reviewCount and rating of the game
+        const { reviewCount, rating } = game;
+        res.status(200).json({ reviewCount: reviewCount, rating: rating });
+    } catch (error) {
+        console.error('Error getting game review stats:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.post('/api/getReviews', async (req, res, next) => {
     // incoming: videoGameId
     // outgoing: error
