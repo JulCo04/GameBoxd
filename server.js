@@ -73,9 +73,13 @@ app.post('/api/register', async (req, res, next) => {
         const db = client.db("VGReview");
 
         // Check if the email already exists
-        const existingUser = await db.collection('Users').findOne({ email: email });
-        if (existingUser) {
+        const existingUserWithEmail = await db.collection('Users').findOne({ email: email });
+        const existingUserWithDisplayName = await db.collection('Users').findOne({ displayName: displayName });
+
+        if (existingUserWithEmail) {
             error = 'Email already exists';
+        } else if (existingUserWithDisplayName) {
+            error = 'Display name already exists';
         } else {
             const newUser = {
                 email: email,
@@ -791,7 +795,8 @@ app.post('/api/reviews', async (req, res, next) => {
             textBody: textBody,
             rating: rating,
             videoGameId: videoGameId,
-            displayName: displayName
+            displayName: displayName,
+            videoGameName: ""
         };
 
         await db.collection('Reviews').insertOne(newReview);
@@ -908,6 +913,51 @@ app.post('/api/getRecentReviews', async (req, res, next) => {
         var ret = { error: error };
     }
     res.status(200).json(ret);
+});
+
+app.delete('/api/reviews/delete/:reviewId', async (req, res) => {
+    const { reviewId } = req.params; // Extract the reviewId from the route parameters
+
+    try {
+        const db = client.db("VGReview");
+        const reviewsCollection = db.collection('Reviews');
+
+        // Check if the review exists
+        const existingReview = await reviewsCollection.findOne({ _id: new ObjectId(reviewId) });
+        if (!existingReview) {
+            return res.status(404).json({ error: "Review not found." });
+        }
+
+        // Delete the review
+        const result = await reviewsCollection.deleteOne({ _id: new ObjectId(reviewId) });
+
+        if (result.deletedCount === 1) {
+            // Update the game rating in the VideoGames collection
+            const videoGameId = existingReview.videoGameId;
+            const game = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
+            if (game) {
+                const ovrRating = game.rating;
+                const reviewCount = game.reviewCount;
+                const updatedReviewCount = reviewCount - 1;
+                let newRating = 0;
+                if (updatedReviewCount > 0) {
+                    newRating = ((ovrRating * reviewCount) - existingReview.rating) / updatedReviewCount;
+                }
+
+                await db.collection('VideoGames').updateOne(
+                    { videoGameId: videoGameId },
+                    { $set: { rating: newRating, reviewCount: updatedReviewCount } }
+                );
+            }
+
+            return res.status(200).json({ message: "Review deleted successfully." });
+        } else {
+            return res.status(500).json({ error: "Failed to delete review." });
+        }
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 
