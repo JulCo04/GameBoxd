@@ -768,7 +768,7 @@ app.post('/api/games/gameName', async (req, res) => {
 
 app.post('/api/reviews', async (req, res, next) => {
     try {
-        const { textBody, rating, videoGameId, displayName } = req.body;
+        const { textBody, rating, videoGameId, displayName, videoGameName } = req.body;
         console.log("Request Body:", req.body);
 
         // Check if the required data is present in the request body
@@ -796,7 +796,7 @@ app.post('/api/reviews', async (req, res, next) => {
             rating: rating,
             videoGameId: videoGameId,
             displayName: displayName,
-            videoGameName: ""
+            videoGameName: videoGameName
         };
 
         await db.collection('Reviews').insertOne(newReview);
