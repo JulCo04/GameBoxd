@@ -9,7 +9,8 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   const [reviews, setReviews] = useState([]);
   const [showOverlay, setShowOverlay] = useState(false); // Changed initial state to false
   const [formattedReleaseDate, setFormattedReleaseDate] = useState('');
-
+  const [reviewStats, setReviewStats] = useState({ reviewCount: 0, rating: 0 });
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track user login status
   const app_name = 'g26-big-project-6a388f7e71aa';
   console.log(gamePlatforms[0].props.children);
 
@@ -24,6 +25,16 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
       day: "2-digit",
     });
     setFormattedReleaseDate(date);
+
+    fetchReviewStats();
+
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+
   }, [gameReleaseDate]);
 
   function buildPath(route) {
@@ -101,6 +112,25 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
     window.location.reload();
   };
 
+  const fetchReviewStats = async () => {
+    try {
+      const obj = { videoGameId: gameId };
+      const js = JSON.stringify(obj);
+      console.log("JS", js); // Fixed concatenation
+  
+      const response = await fetch(buildPath(`api/reviews/stats/${gameId}`), 
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } }); // Removed body parameter
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch review statistics');
+      }
+      const data = await response.json();
+      setReviewStats(data);
+    } catch (error) {
+      console.error('Error fetching review statistics:', error);
+    }
+  };
+  
   const toggleReview = () => {
     setShowReview(!showReview);
   };
@@ -112,6 +142,48 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   // Extract company names and join them into a single string separated by commas
   const creatorsString = gameCreators.map(creator => creator.props.children).join(", ");
   const platformsString = gamePlatforms.map(platform => platform.props.children).join(", ");
+
+  const addToLibrary = async () => {
+    try {
+      const userData = localStorage.getItem('user_data');
+      const userDataObj = JSON.parse(userData);
+  
+      const addGameResponse = await fetch(buildPath("api/addGame"), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: userDataObj.email,
+          videoGameId: gameId
+        })
+      });
+  
+      if (!addGameResponse.ok) {
+        throw new Error('Failed to add game to library');
+      }
+  
+      const data = await addGameResponse.json();
+
+      if (data.error === "Game already in library!") {
+        // Display a notification that the game is already in the library
+        alert("This game is already in your library!");
+      } else {
+        // Display a notification that the game has been added to the library
+        alert("Game successfully added to your library!");
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+  
+      
+  
+      console.log('Game added to library successfully:', data);
+    } catch (error) {
+      console.error('Error adding game to library:', error);
+    }
+  };
 
   return (
     <>
@@ -147,11 +219,19 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
       <div className="details-container text-white row px-12 mt-4">
         <div className="col-md-3">
           <img className="rounded w-100" src={gameImage} alt={gameName} />
+          <hr></hr>
+          <div className="mt-3 d-flex align-items-center justify-content-evenly">
+            <p className="font-weight-bold">{reviewStats.reviewCount} total reviews</p>
+            <div className="d-flex">
+            <img src="/mario-star.png" style={{ width: '20px' }} />
+              <p className="font-weight-bold ms-1">{reviewStats.rating !== 0 ? reviewStats.rating.toFixed(2) + " / 5" : "Unrated"}</p>
+            </div>
+          </div>
         </div>
 
         <div className="col-md-6">
           <div className="details-content">
-          <h1 className="display-2 fw-bold text-uppercase">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
+            <h1 className="display-2 fw-bold text-uppercase">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
             <p className="fs-6">{gameSummary}</p>
             <div>
               <h6>Developed by:</h6>
@@ -165,8 +245,16 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
         </div>
 
         <div className="col-md-3 d-flex flex-column justify-content-center align-items-center mx-auto my-auto">
-          <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }} onClick={toggleOverlay}>Add a Review</button>
-          <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }}>Add to List</button>
+          {isLoggedIn ? (
+            <>
+              <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }} onClick={toggleOverlay}>Add a Review</button>
+              <button className="btn btn-primary text-white w-10 fs-5 mb-3 mt-3" style={{ width: '150px' }} onClick={addToLibrary}>Add to List</button>
+            </>
+          ) : (
+            <>
+              <p>Login to log, and review.</p>              
+            </>
+          )}
         </div>
 
         <ReviewsIU />
@@ -176,6 +264,3 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
 }
 
 export default GameDetails;
-
-
-

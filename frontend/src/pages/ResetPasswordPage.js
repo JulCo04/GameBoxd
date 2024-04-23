@@ -24,13 +24,22 @@ function ResetPasswordPage() {
     const handleResetPassword = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
-
+        const newPassword = document.getElementById('newPassword').value; // Assuming you have an input field with id 'newPassword'
+        const confirmPassword = document.getElementById('confirmPassword').value; // Assuming you have an input field with id 'confirmPassword'
+    
         try {
+            // Check password complexity
+            const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z0-9]).{8,}$/;
+            if (!passwordRegex.test(newPassword)) {
+                setMessage('Password must be at least 8 characters long and contain at least 1 special character.');
+                return;
+            }
+    
             if (newPassword !== confirmPassword) {
                 setMessage('Passwords do not match.');
                 return;
             }
-
+    
             const response = await fetch(buildPath("api/reset-password"), {
                 method: 'POST',
                 headers: {
@@ -48,6 +57,7 @@ function ResetPasswordPage() {
             setMessage('An error occurred. Please try again later.');
         }
     };
+    
 
     return (
         <div className='page-container'>

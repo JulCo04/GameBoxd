@@ -14,7 +14,8 @@ function GamesGridUI({games}) {
         // { <div>No Results Found</div>}
         <div className="game-card" key={game.id}>
           <Link to={{
-            pathname: `/games/${game.name}/${game.id}`,
+            
+            pathname: `/games/${game.name.replace(/\?/g, '')}/${game.id}`,
           }}>
             <img
             src={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}

@@ -671,16 +671,28 @@ const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
 
 app.post('/api/games', async (req, res) => {
     try {
-        const { limit, offset, genre, search, gameIds} = req.body; // Receive genre and search term from request body
+        const { limit, offset, genre, search, newReleases } = req.body; // Receive genre, search term, and newReleases flag from request body
+
+        // Get the current date and time
+        var currentDate = new Date();
+
+        // Subtract 7 days from the current date
+        var sevenDaysAgo = new Date(currentDate.getTime() - (14 * 24 * 60 * 60 * 1000));
+
+        // Convert both dates to Unix epoch time in seconds
+        var currentUnixTimeSeconds = Math.floor(currentDate.getTime() / 1000);
+        var sevenDaysAgoUnixTimeSeconds = Math.floor(sevenDaysAgo.getTime() / 1000);
+
 
         let query = `
             fields name, cover.url, total_rating_count, first_release_date, total_rating, summary;
             offset ${offset};
+            where cover != null;
         `;
+
 
         if (search) { // If search term is provided, add it to the query
             query += `search "${search}";
-                      where total_rating_count > 10;
                       limit 500;`;
         } else if (genre) { // If genre is provided, add it to the query
             query += `sort total_rating_count desc;
@@ -688,10 +700,14 @@ app.post('/api/games', async (req, res) => {
                       sort first_release_date desc;
                       where total_rating_count > 100 & genres.name = "${genre}";
                       limit ${limit};`;
-        } else if (gameIds) {
-            query += `where id = (${gameIds});
-                      limit ${gameIds.length};`;
-        } else { // If neither search nor genre is provided, include sorting and filtering
+        } else if (newReleases) { // If newReleases flag is set, fetch new releases from the last two weeks
+            query += `
+                      sort total_rating_count desc;
+                      where first_release_date >= ${sevenDaysAgoUnixTimeSeconds} & first_release_date <= ${currentUnixTimeSeconds} & total_rating > 50;
+                      limit ${limit};
+                      `;
+           
+        } else { // If neither search, genre, nor newReleases flag is provided, include default sorting and filtering
             query += `
                 where total_rating_count > 100;
                 sort total_rating_count desc;
@@ -700,6 +716,7 @@ app.post('/api/games', async (req, res) => {
                 limit ${limit};
             `;
         }
+
 
         const response = await fetch('https://api.igdb.com/v4/games', {
             method: 'POST',
@@ -711,6 +728,7 @@ app.post('/api/games', async (req, res) => {
             body: query
         });
 
+
         console.log("REQ: ", req.body);
         console.log("QUERY: ", query);
 
@@ -719,6 +737,7 @@ app.post('/api/games', async (req, res) => {
             throw new Error('Failed to fetch games');
         }
 
+
         const games = await response.json();
         res.json(games);
     } catch (error) {
@@ -726,6 +745,7 @@ app.post('/api/games', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 app.post('/api/games/gameName', async (req, res) => {
     try {
@@ -1113,7 +1133,6 @@ app.delete('/api/user/games/:userId/:gameId', async (req, res) => {
 
 app.get('/api/reviews/stats/:videoGameId', async (req, res) => {
     const { videoGameId } = req.params; // Extract the videoGameId from the route parameters
-
     try {
         const db = client.db("VGReview");
         const videoGamesCollection = db.collection('VideoGames');

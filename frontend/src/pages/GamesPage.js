@@ -67,10 +67,11 @@ const GamesPage = () => {
           const filteredGames = gamesData.filter(game => game.total_rating !== undefined);
           
           // Sort filtered games by total_rating in descending order
-          const sortedGames = filteredGames.sort((a, b) => b.total_rating - a.total_rating);
+          const sortedGames = filteredGames.sort((a, b) => b.total_rating_count - a.total_rating_count);
 
           // Slice the first 15 games
           const slicedGames = sortedGames.slice(offset, offset + limit);
+          console.log(slicedGames);
           setGames(slicedGames);
         }
         else {

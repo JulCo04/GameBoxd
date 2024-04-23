@@ -24,35 +24,43 @@ function Register({onExitClick}) {
     }
 
     const doRegister = async event => {
-        event.preventDefault();
+    event.preventDefault();
 
-        // Check if any field is empty
-        if (!email.value || !password.value || !displayName.value) {
-            setMessage('All fields are required.');
-            return;
-        }
+    // Check if any field is empty
+    if (!email.value || !password.value || !displayName.value) {
+        setMessage('All fields are required.');
+        return;
+    }
 
-        var obj = {email: email.value, password: password.value, displayName: displayName.value};
-        var js = JSON.stringify(obj);
+    // Check password complexity
+    const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(password.value)) {
+        setMessage('Password must be at least 8 characters long and contain at least 1 special character.');
+        return;
+    }
 
-        console.log(js);
+    var obj = {email: email.value, password: password.value, displayName: displayName.value};
+    var js = JSON.stringify(obj);
 
-        try {
-            // Register user
-            console.log("Registering....");
-            const response = await fetch(buildPath('api/register'),
-                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+    console.log(js);
 
-            var res = JSON.parse(await response.text());
-            console.log(res);
+    try {
+        // Register user
+        console.log("Registering....");
+        const response = await fetch(buildPath('api/register'),
+            { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
 
-            setMessage('Successfully Registered! We have sent you an email to verify your account.');
-        }
-        catch (e) {
-            alert(e.toString());
-            return;
-        }
-    };
+        var res = JSON.parse(await response.text());
+        console.log(res);
+
+        setMessage('Successfully Registered! We have sent you an email to verify your account.');
+    }
+    catch (e) {
+        alert(e.toString());
+        return;
+    }
+};
+
 
     const handleExitButtonClick = () => {
         onExitClick();
