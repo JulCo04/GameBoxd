@@ -84,7 +84,8 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
           displayName: displayName,
           textBody: reviewText,
           rating: rating,
-          videoGameId: gameId
+          videoGameId: gameId,
+          videoGameName: gameName
         })
       });
 
