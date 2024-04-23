@@ -120,12 +120,13 @@ const ProfileReviewsComponent = ({ formToggler }) => {
   }
 
   const formatReviewDateWritten = (date) => {
-    const str = date.slice(0, 10);
-    const year = str.slice(0, 4);
-    const month = str.slice(5, 7);
-    const day = str.slice(8, 10);
 
-    const formattedDate = month + "-" + day + "-" + year;
+    let formattedDate = new Date(date);
+    formattedDate = formattedDate.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
 
     return formattedDate;
   }
