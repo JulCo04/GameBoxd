@@ -671,7 +671,7 @@ const authorization = "shv9tq3bjpw8cxlbivhjh4v71vr1rc";
 
 app.post('/api/games', async (req, res) => {
     try {
-        const { limit, offset, genre, search, newReleases } = req.body; // Receive genre, search term, and newReleases flag from request body
+        const { limit, offset, genre, search, newReleases, gameIds } = req.body; // Receive genre, search term, and newReleases flag from request body
 
         // Get the current date and time
         var currentDate = new Date();
@@ -707,6 +707,9 @@ app.post('/api/games', async (req, res) => {
                       limit ${limit};
                       `;
            
+        } else if (gameIds) {
+            query += `where id = (${gameIds});
+                      limit ${gameIds.length};`   
         } else { // If neither search, genre, nor newReleases flag is provided, include default sorting and filtering
             query += `
                 where total_rating_count > 100;
