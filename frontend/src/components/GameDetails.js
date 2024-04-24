@@ -11,9 +11,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   const [formattedReleaseDate, setFormattedReleaseDate] = useState('');
   const [reviewStats, setReviewStats] = useState({ reviewCount: 0, rating: 0 });
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track user login status
-  const app_name = 'g26-big-project-6a388f7e71aa';
-  console.log(gamePlatforms[0].props.children);
-
+  
   useEffect(() => {
     var utcSeconds = gameReleaseDate;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
@@ -37,6 +35,8 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
 
   }, [gameReleaseDate]);
 
+  const app_name = 'g26-big-project-6a388f7e71aa';
+
   function buildPath(route) {
     console.log("ENVIRONMENT " + process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'production') {
@@ -54,10 +54,21 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
 
   const submitReview = async () => {
     try {
+
+      if (rating === 0) {
+        alert("Please select a rating before submitting your review.");
+        return; // Prevent submission if no rating is selected
+      }
+  
+      if (reviewText.trim().split(/\s+/).length < 1) {
+        alert("Please write a review.");
+        return; // Prevent submission if review text has less than 5 words
+      }
+  
       const userData = localStorage.getItem('user_data');
       const userDataObj = JSON.parse(userData);
       const displayName = userDataObj.displayName;
-
+  
       // Call addGame API to add the game to the user's library
       const addGameResponse = await fetch(buildPath("api/addGame"), {
         method: 'POST',
@@ -69,11 +80,11 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
           videoGameId: gameId
         })
       });
-
+  
       if (!addGameResponse.ok) {
         throw new Error('Failed to add game to library');
       }
-
+  
       // Submit review after adding the game to the library
       const response = await fetch(buildPath("api/reviews"), {
         method: 'POST',
@@ -88,30 +99,31 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
           videoGameName: gameName
         })
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to submit review');
       }
-
+  
       const data = await response.json();
-
+  
       if (data.error) {
         throw new Error(data.error);
       }
-
+  
       setReviews([...reviews, {
         displayName: displayName,
         textBody: reviewText,
         rating: rating
       }]);
-
+  
       toggleOverlay();
     } catch (error) {
       console.error('Error submitting review:', error);
     }
-
+  
     window.location.reload();
   };
+  
 
   const fetchReviewStats = async () => {
     try {

@@ -52,8 +52,10 @@ function ReviewsIU() {
         <div>
           {reviews.map((review, index) => (
             <div key={index} className="review-item">
-              <p style={{ fontSize: '14px' }}><strong></strong> {review.displayName} {Array.from({ length: review.rating }, (_, i) => <span key={i}>★</span>)}</p>
-              <p>{review.textBody}</p>
+              <div className="review-item" style={{ color: 'white', textAlign: 'left' }}>
+                <p style={{ fontSize: '14px', color: 'lightgrey', textAlign: 'left', margin: '0' }}><strong>{review.displayName}</strong> {Array.from({ length: review.rating }, (_, i) => <span key={i} style={{ fontSize: '20px', color: '#0A9396' }}>★</span>)}</p>
+                <p style={{ textAlign: 'left', fontSize: '14px', margin: '5px 0 0', color: 'lightgray'}}>{review.textBody}</p>
+              </div>
               {index !== reviews.length - 1 && <hr className="opacity-50" />}
             </div>
           ))}

@@ -97,33 +97,36 @@ const GamesPage = () => {
 
   return (
     <div className="page-container text-white">
-        <LoggedInNavBar />
-        <div className="top-games-container">
-            <h1 className="display-3 fw-bold">Games</h1>
-            <div className="filter-container">
-                <input
-                  className="games-search-bar me-2 fs-5 fw-semibold"
-                  type="text"
-                  placeholder="Search Game"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term state
-                />
-                <select className="genre-dropdown fs-5 fw-semibold" onChange={(e) => setSelectedGenre(e.target.value)} value={selectedGenre}>
-                    <option value="">Select Genre</option>
-                    {genres.map((genre, index) => (
-                        <option key={index} value={genre}>{genre}</option>
-                    ))}
-                </select>
-                <button className="clear-button fs-5 fw-semibold" onClick={clearFilter}>Clear Filter</button>
-            </div>
-            <GamesGridUI games={games}/>
-            <div className="pagination justify-content-center mt-3 mb-5">
-                <button className="page-button fs-5 fw-semibold" onClick={previousPage} disabled={page === 1}> Previous </button>
-                <button className="page-button fs-5 fw-semibold" onClick={nextPage}>Next</button>
-                <span className="current-page fs-5 fw-semibold"> Page {page}</span>
-            </div>
+    <LoggedInNavBar />
+    <div className="top-games-container">
+        <h1 className="display-6 ">Games</h1>
+        <div className="filter-container">
+            <input
+              className="games-search-bar me-2 fs-5 fw-semibold"
+              type="text"
+              placeholder="Search Game"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term state
+            />
+            
+            <select className="genre-dropdown" onChange={(e) => setSelectedGenre(e.target.value)} value={selectedGenre}>
+            <option value="">Genre</option>
+            {genres.map((genre, index) => (
+                <option key={index} value={genre}>{genre}</option>
+            ))}
+            </select>
+            <button className="clear-button" onClick={clearFilter}>Clear Filter</button>
+        </div>
+        <hr style={{color: 'white'}} />
+        <GamesGridUI games={games}/>
+        <hr style={{color: 'white'}} />
+        <div className="pagination justify-content-between mt-3 mb-5">
+            <button className="page-button" onClick={previousPage} disabled={page === 1}>Previous</button>
+            <button className="page-button" onClick={nextPage}>Next</button>
         </div>
     </div>
+</div>
+
 );
 }
 
