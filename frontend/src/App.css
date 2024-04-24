@@ -466,3 +466,12 @@
   background-color: #40454b;
   border-radius: 3px;
 }
+
+.link {
+  text-decoration: none;
+  color: white;
+}
+
+.link:hover {
+  color:#0A9396;
+}

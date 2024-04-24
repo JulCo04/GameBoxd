@@ -201,7 +201,7 @@ const ProfileFriendsComponent = ({ formToggler }) => {
             <div className="">
               <img className=" " width="" height="" src="profile.svg" style={{ height: '80px', width: 'auto' }} />
               <span className="mx-4 align-middle fw-semibold fs-4">
-                <Link to={{
+                <Link className="link" to={{
                   pathname: `/Profile/${friend.displayName}`,
                 }}>{friend.displayName}</Link>
                 </span>
