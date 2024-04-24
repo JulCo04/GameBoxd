@@ -59,7 +59,7 @@ const ProfileReviewsComponent = ({ formToggler }) => {
       _reviewedGamesIds = [...arr];
 
     } catch (e) {
-      alert(e.toString() + "fetchFriends()");
+      alert(e.toString() + "fetchReviews()");
       return;
     }
 
