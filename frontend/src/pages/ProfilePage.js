@@ -5,6 +5,7 @@ import Settings from '../components/Settings';
 import ProfileFriendsComponent from '../components/ProfileFriendsComponent';
 import UserLookUp from '../components/UserLookUp';
 import ProfileReviewsComponent from '../components/ProfileReviewsComponent';
+import ProfileGamesListComponent from '../components/ProfileGamesListComponent';
 
 const ProfilePage = () => {
   const [showForm, setShowForm] = useState(null);
@@ -28,7 +29,11 @@ const ProfilePage = () => {
             <ProfileFriendsComponent formToggler={toggleForm}/>
           </div>
 
-          <hr className="mt-0 opacity-50"/>
+          <div className="">
+            <ProfileGamesListComponent />
+          </div>
+
+          {/* <hr className="mt-0 opacity-50"/> */}
 
         </div>
       </div>
