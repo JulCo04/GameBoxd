@@ -12,7 +12,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   const [formattedReleaseDate, setFormattedReleaseDate] = useState('');
   const [reviewStats, setReviewStats] = useState({ reviewCount: 0, rating: 0 });
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track user login status
-  const [buttonText, setButtonText] = useState("Add to List");
+  const [buttonText, setButtonText] = useState("Add to list");
   const [gameInLibrary, setGameInLibrary] = useState(false);
   
   useEffect(() => {
@@ -52,7 +52,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
           if (gameIsInLibrary === true) {
             setButtonText("Remove from list");
           } else {
-            setButtonText("Add to List");
+            setButtonText("Add to list");
           }
 
         } catch (error) {
@@ -219,10 +219,10 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
         throw new Error(data.error);
       }  
       console.log('Game added to library successfully:', data);
-      setButtonText('Remove from List');
+      setButtonText('Remove from list');
       setGameInLibrary(true);
     } catch (error) {
-      setButtonText('Remove from List');
+      setButtonText('Remove from list');
       setGameInLibrary(true);
     }
   };
@@ -245,7 +245,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   
       alert("Game removed from your library!");
       setGameInLibrary(false);
-      setButtonText('Add to List');
+      setButtonText('Add to list');
     } catch(error) {
       console.error(error);
     }
