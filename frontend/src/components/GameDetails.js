@@ -60,7 +60,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
         return; // Prevent submission if no rating is selected
       }
   
-      if (reviewText.trim().split(/\s+/).length < 5) {
+      if (reviewText.trim().split(/\s+/).length < 1) {
         alert("Please write a review.");
         return; // Prevent submission if review text has less than 5 words
       }

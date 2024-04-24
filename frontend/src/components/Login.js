@@ -35,12 +35,13 @@ function Login({onExitClick}) {
             console.log("Response: "+response.ok);    
             
             var res = JSON.parse(await response.text());
+
             console.log("Login Fetch Result: " + JSON.stringify(res));
             
             // If username does not exist display a notice
             console.log(res.displayName == '');
             if ((res.displayName == '') || (res.displayName == null)) {
-                setMessage('User/Password combination incorrect');
+                setMessage(res.error);
             }
             else {
                 var user = { id: res.id, displayName: res.displayName, email: res.email, dateCreated: res.dateCreated }
