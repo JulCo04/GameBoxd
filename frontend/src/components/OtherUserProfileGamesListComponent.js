@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 
-const ProfileGamesListComponent = () => {
+const OtherUserProfileGamesListComponent = ({ displayName, userId }) => {
   const [gamesDetailsList, setGamesDetailsList] = useState([]);
   const [gamesEmpty, setGamesEmpty] = useState(true);
 
@@ -12,7 +12,7 @@ const ProfileGamesListComponent = () => {
     }
 
     fetchGamesListData();
-  }, []);
+  }, [userId]);
 
   let _gamesList;
   let _gamesDetailsList;
@@ -32,8 +32,8 @@ const ProfileGamesListComponent = () => {
   }
 
   const fetchGamesList = async () => {
-    let userData = JSON.parse(localStorage.getItem('user_data'));
-    let userId = userData.id;
+    // let userData = JSON.parse(localStorage.getItem('user_data'));
+    // let userId = userData.id;
 
     try {
       const response = await fetch(buildPath("api/user/games/" + userId));
@@ -92,7 +92,7 @@ const ProfileGamesListComponent = () => {
   return (
     <div className="">
       <div className="d-flex justify-content-between ">
-        <span className=" fw-semibold fs-3">Your Games List</span>
+        <span className=" fw-semibold fs-3">{displayName}'s Games List</span>
       </div>
 
       <hr className="ps-0 mt-2 opacity-50" />
@@ -131,4 +131,4 @@ const ProfileGamesListComponent = () => {
 
 }
 
-export default ProfileGamesListComponent;
+export default OtherUserProfileGamesListComponent;

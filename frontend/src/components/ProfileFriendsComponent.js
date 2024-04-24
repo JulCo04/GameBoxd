@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import UserLookUp from "./UserLookUp";
 
 const ProfileFriendsComponent = ({ formToggler }) => {
@@ -199,7 +200,11 @@ const ProfileFriendsComponent = ({ formToggler }) => {
           <div className="d-flex justify-content-between mb-3">
             <div className="">
               <img className=" " width="" height="" src="profile.svg" style={{ height: '80px', width: 'auto' }} />
-              <span className="mx-4 align-middle fw-semibold fs-4">{friend.displayName}</span>
+              <span className="mx-4 align-middle fw-semibold fs-4">
+                <Link to={{
+                  pathname: `/Profile/${friend.displayName}`,
+                }}>{friend.displayName}</Link>
+                </span>
             </div>
             <button onClick={() => removeFriendPrompt(friend.displayName, friend.id)} className="btn btn-danger text-white fw-semibold my-auto">Remove</button>
           </div>
