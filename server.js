@@ -1,5 +1,5 @@
 require('dotenv').config();
-const url = process.env.MONGODB_URI;
+const url = 'mongodb+srv://admin:azfKLMEYBvAjReBH@cluster0.m6fnyuj.mongodb.net/';
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url);
 client.connect();
