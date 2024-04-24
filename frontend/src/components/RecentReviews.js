@@ -91,48 +91,42 @@ function RecentReviews() {
 
   return (
     <div className='recent-reviews-div' style={{ textAlign: 'left' }}>
-  <h1 className="page-title" style={{ textAlign: 'left', color: 'white' }}>Recent Reviews</h1>
-  <div style={{ borderBottom: '1px solid #ccc', margin: '5px 0 20px' }} />
-  {reviews.length > 0 ? (
-    <div>
-      {reviews.map((review, index) => (
-        
-        <div> 
-          <div key={index} className="recent-review-content" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
-            <Link to={`/games/${review.videoGameName}/${review.videoGameId}`} style={{ flex: '1', marginRight: '20px', textDecoration: 'none', color: 'white' }}>
-              <img className="review-game-card" src={review.gameCoverUrl} alt={review.videoGameName} />
-              
-            </Link>
-            
-            <div style={{ width: '100%' }}>
-              <Link 
-                to={`/games/${review.videoGameName}/${review.videoGameId}`} 
-                className="game-link" // Add a class name for easier styling
-              >
-              <h3 style={{ textAlign: 'left', fontSize: '18px', margin: '0', marginBottom: '5px' }}>{review.videoGameName}</h3>
+      <h1 className="page-title" style={{ textAlign: 'left', color: 'white' }}>Recent Reviews</h1>
+      <div style={{ borderBottom: '1px solid #ccc', margin: '5px 0 20px' }} />
+      {reviews.length > 0 ? (
+        <div>
+          {reviews.map((review, index) => (
+            <div key={index} className="recent-review-content" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <Link to={`/games/${review.videoGameName}/${review.videoGameId}`} style={{ flex: '1', marginRight: '20px', textDecoration: 'none', color: 'white' }}>
+                <img className="review-game-card" src={review.gameCoverUrl} alt={review.videoGameName} />
               </Link>
-              
+              <div style={{ width: '100%' }}>
+              <div>
+                <Link to={`/games/${review.videoGameName}/${review.videoGameId}`} className="game-link">
+                  <h3 style={{ textAlign: 'left', fontSize: '18px', margin: '0', marginBottom: '5px', display: 'inline-block' }}>
+                    {review.videoGameName}
+                  </h3>
+                </Link>
+              </div>
               <div className="review-item" style={{ color: 'white', textAlign: 'left' }}>
-                <p style={{ fontSize: '14px', color: 'lightgrey', textAlign: 'left', margin: '0' }}><strong>{review.displayName}</strong> {Array.from({ length: review.rating }, (_, i) => <span key={i} style={{ fontSize: '20px', color: '#0A9396' }}>★</span>)}</p>
+                <p style={{ fontSize: '14px', color: 'lightgrey', textAlign: 'left', margin: '0' }}>
+                  <Link className="user-link" to={`/Profile/${review.displayName}`}>
+                    <strong>{review.displayName}</strong> {Array.from({ length: review.rating }, (_, i) => <span key={i} style={{ fontSize: '20px', color: '#0A9396' }}>★</span>)}
+                  </Link>
+                </p>               
                 <p style={{ textAlign: 'left', fontSize: '14px', margin: '5px 0 0', color: 'lightgray'}}>{review.textBody}</p>
               </div>
-              
             </div>
-          </div>
-          {index !== reviews.length - 1 && <hr style={{color: 'white'}} />}
+              {index !== reviews.length - 1 && <hr style={{color: 'white'}} />}
+            </div>
+          ))}
         </div>
-      ))}
-      
+      ) : (
+        <p style={{ color: 'white', textAlign: 'left' }}></p>
+      )}
     </div>
-    
-  ) : (
-    <p style={{ color: 'white', textAlign: 'left' }}>No reviews available.</p>
-  )}
-</div>
-
-
-
   );
+  
 }
 
 export default RecentReviews;
