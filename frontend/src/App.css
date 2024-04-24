@@ -245,15 +245,23 @@
 
 .games-search-bar {
   width: 300px; /* Adjust width as needed */
+  height: 30px;
   padding: 8px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 25px;
   font-size: 16px;
 }
 
-.games-search-bar:focus {
+.games-search-bar:focus, .genre-dropdown:focus {
   outline: none;
-  border-color: #007bff; /* Change color on focus */
+  border-color: none; /* Change color on focus */
+  border: none;
+  outline: none;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
 }
 
 .page-title {
@@ -262,18 +270,15 @@
   margin-bottom: 20px;
 }
 
-.filter-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
 
-.filter-button,
-.clear-button {
+.clear-button, .page-button {
+  letter-spacing: 0.5px;
+  height: auto;
+  font-size: 16px;
   background-color: #0A9396;
   color: #fff;
   border: none;
-  padding: 9px 12px;
+  padding: 3px 10px;
   margin-right: 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -285,13 +290,27 @@
 }
 
 .genre-dropdown {
-  padding: 11px;
+  letter-spacing: 0.5px;
+  font-size: 16px;
+  height: 30px;
+  width: auto;
   border-radius: 5px;
   border: none;
   margin-right: 10px;
   background-color: rgb(67, 81, 95, 0.5);
   color: white;
+  border-color: none;
+  outline: none;
 }
+
+
+.genre-dropdown option {
+  background-color: #40454b;
+  border-color: none;
+  border: none;
+  outline: none;
+}
+
 
 ::-webkit-scrollbar {
   width: 10px; /* Adjust the width as needed */
@@ -339,10 +358,18 @@
 }
 
 .game-card {
+  max-width: 200px;
+  max-height: 200px; 
+  width: auto;
   flex: 0 0 auto;
-  border-radius: 10px; /* Add roundness to game cards */
+  border-radius: 10px;
   overflow: hidden; /* Ensure the border-radius applies correctly */
+  background-color: rgba(7, 49, 56, 0.5);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 
 .game-card img {
   display: block; /* Ensure the image takes up the full width of its container */
@@ -362,22 +389,6 @@
 
 
 
-
-.page-button {
-  background-color: #0A9396;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  margin-right: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.current-page {
-  color: white;
-  margin-top: auto;
-  margin-bottom: auto;
-}
 
 /* Game details page */
 
@@ -466,3 +477,32 @@
   background-color: #40454b;
   border-radius: 3px;
 }
+
+.recent-reviews-div {
+  width: 50%; /* Adjust the width as per your preference */
+  margin: 0 auto; /* Center the container horizontally */
+  margin-bottom: 20px;
+}
+
+.recent-review-content {
+  width: 100%;
+}
+
+.review-game-card {
+  max-width: 150px;
+  max-height: 150px; 
+  width: auto;
+  flex: 0 0 auto;
+  border-radius: 10px;
+}
+
+.game-link {
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s ease-in-out;
+}
+
+.game-link:hover {
+  color: #0A9396;
+}
+

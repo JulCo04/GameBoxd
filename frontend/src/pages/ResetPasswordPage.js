@@ -24,8 +24,6 @@ function ResetPasswordPage() {
     const handleResetPassword = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
-        const newPassword = document.getElementById('newPassword').value; // Assuming you have an input field with id 'newPassword'
-        const confirmPassword = document.getElementById('confirmPassword').value; // Assuming you have an input field with id 'confirmPassword'
     
         try {
             // Check password complexity
