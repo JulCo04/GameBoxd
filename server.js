@@ -545,7 +545,7 @@ app.post('/api/searchusers', async (req, res, next) => {
 
 
 app.post('/api/deleteuser', async (req, res, next) => {
-    const { id } = req.body; // Extracting id from req.body
+    const { id } = req.body; // Extracting userId from req.body
     let error = '';
     let successMessage = '';
 
@@ -555,25 +555,43 @@ app.post('/api/deleteuser', async (req, res, next) => {
         const reviewsCollection = db.collection('Reviews');
         const videoGamesCollection = db.collection('VideoGames');
 
-        // Delete all reviews by the user
-        await reviewsCollection.deleteMany({ userId: id });
+        // Find the user by userId
+        const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+        if (!user) {
+            error = 'User not found';
+            return res.status(404).json({ error });
+        }
 
-        // Update game scores based on the deleted reviews
-        const deletedReviews = await reviewsCollection.find({ userId: id }).toArray();
-        for (const review of deletedReviews) {
+        // Get the user's display name
+        const displayName = user.displayName;
+
+        // Fetch the user's reviews
+        const userReviews = await reviewsCollection.find({ displayName }).toArray();
+
+        // Delete user's reviews from the reviews collection using their display name
+        await reviewsCollection.deleteMany({ displayName });
+
+        // Update game ratings and delete games with zero ratings
+        for (const review of userReviews) {
             const { videoGameId, rating } = review;
 
             // Find the game and update its rating and review count
             const game = await videoGamesCollection.findOne({ videoGameId });
             if (game) {
                 const { rating: oldRating, reviewCount } = game;
-                const newRating = (oldRating * reviewCount - rating) / (reviewCount - 1);
+                const newRating = ((oldRating * reviewCount) - rating) / (reviewCount - 1);
                 const newReviewCount = reviewCount - 1;
 
+                // Update the game's rating and review count in the video games collection
                 await videoGamesCollection.updateOne(
                     { videoGameId },
                     { $set: { rating: newRating, reviewCount: newReviewCount } }
                 );
+
+                // If the game has zero reviews after the deletion, delete it from the VideoGames collection
+                if (newReviewCount === 0) {
+                    await videoGamesCollection.deleteOne({ videoGameId });
+                }
             }
         }
 
