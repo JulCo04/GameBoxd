@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from 'react-router-dom';
 
 const UserLookUp = ({ onExitClick }) => {
   const [showOverlay, setShowOverlay] = useState(true);
@@ -124,8 +124,16 @@ const UserLookUp = ({ onExitClick }) => {
 
             {user !== null &&
               <div className="my-4 py-3 px-3 d-flex text-white fs-4 bg-dark border-white shadow-lg justify-content-between">
-                <img className="my-auto" width="64" src="profile.svg" />
-                <span className=" my-auto fw-semibold ">{user.displayName}</span>
+                <Link className="link my-auto" to={{
+                pathname: `/Profile/${user.displayName}`,
+              }}>
+                <img className="me-2" width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+                <span className=" align-middle my-auto fw-semibold ">
+                  {user.displayName}
+                </span>
+              </Link>
+                {/* <img className="my-auto" width="64" src="profile.svg" />
+                <span className=" my-auto fw-semibold ">{user.displayName}</span> */}
                 <button className="btn btn-primary fw-semibold text-white my-4" onClick={()=>sendFriendRequest(user.id)}>
                   Send Request
                 </button>

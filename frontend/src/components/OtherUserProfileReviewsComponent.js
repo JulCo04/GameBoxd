@@ -161,7 +161,7 @@ const OtherUserProfileReviewsComponent = ({displayName}) => {
                 <Link className="link" to={{pathname: `/games/${review.name}/${review.videoGameId}`,}}> {review.name} ({new Date(review.first_release_date * 1000).getFullYear()}) 
                 </Link>
               </p>
-              <p className="fs-5 fw-light ">{Array.from({ length: review.rating }, (_, i) => <span key={i}>★</span>)} Reviewed {formatReviewDateWritten(review.dateWritten)}</p>
+              <p className="fs-5 fw-light ">{Array.from({ length: review.rating }, (_, i) => <span key={i} style={{ color: '#0A9396'}}>★</span>)} Reviewed {formatReviewDateWritten(review.dateWritten)}</p>
               <p className="fs-5 ">{review.textBody} </p>
               {/* {index !== reviews.length - 1 && <hr className="opacity-50" />} */}
             </div>

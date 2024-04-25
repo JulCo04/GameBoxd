@@ -7,7 +7,7 @@ function ProfileUI({ displayName, onSettingsClick }) {
   return (
     <div className="container-fluid text-white mt-4">
       <div className="d-flex mx-xxl-10 mx-xl-8 mx-5">
-        <img className="me-4" src="profile.svg" />
+        <img className="me-4" src="/user.svg" />
         <h1 className="col-auto my-auto">{displayName}</h1>
         <button className="btn btn-primary ms-auto my-auto mb-0 h1 px-2" onClick={onSettingsClick}>
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" className="bi bi-gear" viewBox="0 0 16 16">

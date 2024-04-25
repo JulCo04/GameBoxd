@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 
 function ReviewsIU() {
   const [reviews, setReviews] = useState([]);
@@ -53,8 +54,13 @@ function ReviewsIU() {
           {reviews.map((review, index) => (
             <div key={index} className="review-item">
               <div className="review-item" style={{ color: 'white', textAlign: 'left' }}>
-                <p style={{ fontSize: '14px', color: 'lightgrey', textAlign: 'left', margin: '0' }}><strong>{review.displayName}</strong> {Array.from({ length: review.rating }, (_, i) => <span key={i} style={{ fontSize: '20px', color: '#0A9396' }}>★</span>)}</p>
-                <p style={{ textAlign: 'left', fontSize: '14px', margin: '5px 0 0', color: 'lightgray'}}>{review.textBody}</p>
+                <Link className="link d-inline-flex" to={{
+                  pathname: `/Profile/${review.displayName}`,
+                }}>
+                <img className="my-auto me-2" width="" height="" src="/user.svg" style={{ height: '20px', width: 'auto' }} />
+                <p style={{ fontSize: '20px',  textAlign: 'left', margin: '0' }}><strong>{review.displayName}</strong> {Array.from({ length: review.rating }, (_, i) => <span key={i} style={{ fontSize: '24px', color: '#0A9396' }}>★</span>)}</p>
+                </Link>
+                <p style={{ textAlign: 'left', fontSize: '18px', margin: '5px 0 0', color: 'lightgray'}}>{review.textBody}</p>
               </div>
               {index !== reviews.length - 1 && <hr className="opacity-50" />}
             </div>

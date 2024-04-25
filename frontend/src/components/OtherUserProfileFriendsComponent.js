@@ -64,12 +64,14 @@ const OtherUserProfileFriendsComponent = ({displayName, userId}) => {
         {friends.map((friend) => (
           <div className="d-flex justify-content-between mb-3">
             <div className="">
-              <img className=" " width="" height="" src="/profile.svg" style={{ height: '80px', width: 'auto' }} />
-              <span className="mx-4 align-middle fw-semibold fs-4">
-                <Link className="link " to={{
-                  pathname: `/Profile/${friend.displayName}`,
-                }}>{friend.displayName}</Link>
+              <Link className="link" to={{
+                pathname: `/Profile/${friend.displayName}`,
+              }}>
+                <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+                <span className="mx-4 align-middle fw-semibold fs-4">
+                  {friend.displayName}
                 </span>
+              </Link>
             </div>
           </div>
         ))}

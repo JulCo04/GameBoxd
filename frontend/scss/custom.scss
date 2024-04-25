@@ -40,7 +40,10 @@ $spacers: map-merge(
         12: ($spacer * 20),
         13: ($spacer * 25),
         14: ($spacer * 30),
-        15: ($spacer * 50)
+        15: ($spacer * 50),
+        16: ($spacer * 75),
+        17: ($spacer * 100),
+        18: ($spacer * 125)
     ),
     $spacers    
 );

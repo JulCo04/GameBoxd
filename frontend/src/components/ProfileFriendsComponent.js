@@ -183,12 +183,20 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       </div>
 
       <hr className="mt-2 opacity-50" />
-      <div className="overflow-scroll" style={{height: '60vh'}}>
+      <div className="overflow-scroll" style={{ height: '60vh' }}>
         {friendRequests.map((friendRequest) => (
           <div className="d-flex justify-content-between mb-3">
-            <div className=""> 
-              <img className=" " width="" height="" src="profile.svg" style={{ height: '80px', width: 'auto' }} />
-              <span className="align-middle mx-4 fw-semibold fs-4">{friendRequest.displayName}</span>
+            <div className="">
+              <Link className="link" to={{
+                pathname: `/Profile/${friendRequest.displayName}`,
+              }}>
+                <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+                <span className="mx-4 align-middle fw-semibold fs-4">
+                  {friendRequest.displayName}
+                </span>
+              </Link>
+              {/* <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+              <span className="align-middle mx-4 fw-semibold fs-4">{friendRequest.displayName}</span> */}
             </div>
             <div className="my-auto">
               <button onClick={() => acceptFriendRequest(friendRequest.id)} className="btn btn-primary my-auto text-white me-2">Accept</button>
@@ -199,12 +207,14 @@ const ProfileFriendsComponent = ({ formToggler }) => {
         {friends.map((friend) => (
           <div className="d-flex justify-content-between mb-3">
             <div className="">
-              <img className=" " width="" height="" src="profile.svg" style={{ height: '80px', width: 'auto' }} />
-              <span className="mx-4 align-middle fw-semibold fs-4">
-                <Link className="link" to={{
-                  pathname: `/Profile/${friend.displayName}`,
-                }}>{friend.displayName}</Link>
+              <Link className="link" to={{
+                pathname: `/Profile/${friend.displayName}`,
+              }}>
+                <img className=" " width="" height="" src="/user.svg" style={{ height: '40px', width: 'auto' }} />
+                <span className="mx-4 align-middle fw-semibold fs-4">
+                  {friend.displayName}
                 </span>
+              </Link>
             </div>
             <button onClick={() => removeFriendPrompt(friend.displayName, friend.id)} className="btn btn-danger text-white fw-semibold my-auto">Remove</button>
           </div>

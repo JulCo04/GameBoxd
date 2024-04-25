@@ -368,7 +368,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
 
         <div className="col-md-6">
           <div className="details-content">
-            <h1 className="display-2 fw-bold text-uppercase">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
+            <h1 className="display-2 fw-bold text-uppercase fs-1">{gameName} <span className="fs-6" style={{fontSize: 'small', fontWeight: 'normal'}}>{formattedReleaseDate}</span></h1>
             <p className="fs-6">{gameSummary}</p>
             <div>
               <h6>Developed by:</h6>

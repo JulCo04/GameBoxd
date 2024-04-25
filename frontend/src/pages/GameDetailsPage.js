@@ -112,6 +112,8 @@ const GameDetailPage = () => {
           <div key={platform.id}>{platform.name}</div>
         ))}
       />
+
+      <div className="mb-5"></div>
     </div>
   );
 };
