@@ -53,7 +53,19 @@ const ProfileFriendsComponent = ({ formToggler }) => {
       const response = await fetch(buildPath("api/friends/" + userId));
 
       let res = JSON.parse(await response.text());
-      setFriends(res.friends);
+
+      let arr = []
+
+      // purges friend list of null entries
+      for(let i = 0; i < res.friends.length; ++i) {
+        if(res.friends[i] !== null) {
+          arr.push(res.friends[i]);
+        }
+      }
+
+      // console.log(arr);
+
+      setFriends(arr);
     } catch (e) {
       alert(e.toString() + "fetchFriends()");
       return;
