@@ -32,6 +32,12 @@ function Register({onExitClick}) {
         return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+        setMessage('Enter a valid email address.');
+        return;
+    }
+
     // Check password complexity
     const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z0-9]).{8,}$/;
     if (!passwordRegex.test(password.value)) {
@@ -53,7 +59,7 @@ function Register({onExitClick}) {
         var res = JSON.parse(await response.text());
         console.log(res);
 
-        setMessage('Successfully Registered! We have sent you an email to verify your account.');
+        setMessage(res.error);
     }
     catch (e) {
         alert(e.toString());
