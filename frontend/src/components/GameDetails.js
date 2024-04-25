@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import ReviewsIU from "./ReviewsUI";
 import StarRating from './StarRating'; // Adjust the path as per your project structure
 import Login from "./Login"; // Import the Login component
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Slide } from 'react-toastify';
 
 function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage, gameCreators, gamePlatforms }) {
   const [reviewText, setReviewText] = useState("");
@@ -15,6 +18,8 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
   const [buttonText, setButtonText] = useState("Add to list");
   const [gameInLibrary, setGameInLibrary] = useState(false);
   
+
+
   useEffect(() => {
     var utcSeconds = gameReleaseDate;
     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
@@ -87,12 +92,32 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
     try {
 
       if (rating === 0) {
-        alert("Please select a rating before submitting your review.");
+        toast.info("Please select a rating before submitting your review.", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          });
         return; // Prevent submission if no rating is selected
       }
-  
-      if (reviewText.trim().split(/\s+/).length < 1) {
-        alert("Please write a review.");
+      
+      if ((reviewText.trim().split(/\s+/).length < 1) || (reviewText === '')) {
+        toast.info("Please write a review.", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          });
         return; // Prevent submission if review text has less than 5 words
       }
   
@@ -212,7 +237,17 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
 
       if (data.error === "Game successfully added to your library!") {
         // Display a notification that the game is already in the library
-         alert("Game successfully added to your library!");
+        toast.info("Game successfully added to your library!", {
+          position: "top-left",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+          });
       } 
 
       if (data.error) {
@@ -242,8 +277,18 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
       if (!deleteGameResponse.ok) {
         throw new Error('Failed to remove game from library');
       }
-  
-      alert("Game removed from your library!");
+
+      toast.info("Game removed from your library!", {
+        position: "top-left",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+        });
       setGameInLibrary(false);
       setButtonText('Add to list');
     } catch(error) {
@@ -306,7 +351,7 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
             <Login onExitClick={() => setShowLoginOverlay(false)} />
         </div>
       )}
-      
+
 
       <div className="details-container text-white row px-12 mt-4">
         <div className="col-md-3">
@@ -350,7 +395,22 @@ function GameDetails({ gameName, gameId, gameReleaseDate, gameSummary, gameImage
         </div>
 
         <ReviewsIU />
+        
       </div>
+      <ToastContainer
+        position="top-left"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Slide} // Pass Slide component as the value for the transition prop
+      />
+
     </>
   );
 }
