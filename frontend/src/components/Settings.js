@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { redirect } from "react-router-dom";
 
 function Settings({ onExitClick, currentDisplayName, currentEmail }) {
   let newUserPassword = '';
@@ -41,6 +40,10 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
 
     if (newPassword !== newPasswordRetype) {
       formErrors["passwords"] = " - Passwords must match";
+      formIsValid = false;
+    }
+    else if(!(/^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[a-zA-Z0-9]).{8,}$/.test(newPassword))) {
+      formErrors["passwords"] = "Password must be at least 8 characters long and contain at least 1 special character."
       formIsValid = false;
     }
 
@@ -110,12 +113,9 @@ function Settings({ onExitClick, currentDisplayName, currentEmail }) {
         { method: 'POST', body: js, headers: { 'Content-Type': 'application/json'} });
       console.log("Response: " + response.ok);
 
-
-      let res = JSON.parse(await response.text())
-      // console.log("Delete User Result: " + JSON.stringify(res));
+      let res = JSON.parse(await response.text());
 
       if(res.successMessage) {
-        window.alert("Account Deleted");
         window.location.href = '/';
         return;
       }
