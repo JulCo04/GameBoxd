@@ -36,6 +36,22 @@ const GameDetailPage = () => {
     console.log("GAME NAME: ", gameName);
     console.log("GAME ID: ", gameId);
 
+    // Some games don't have some of this data, so it was crashing the site on load.
+    // This function checks if any of the game data doesn't exist, and if it doesn't then
+    // it provides some dummy data to allow the page to load.
+    const checkGameData = (gameData) => {
+
+      if (!gameData.involved_companies) {
+        gameData.involved_companies = [{company: {name: "N/A"}}];
+      }
+
+      if (!gameData.platforms) {
+        gameData.platforms = [{name: "N/A"}];
+      }
+
+      return gameData
+    }
+
     const fetchGameDetails = async () => {
       try {
         const response = await fetch(buildPath("api/games/gameName"), {
@@ -48,8 +64,12 @@ const GameDetailPage = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch game details');
         }
-        const gameData = await response.json();
-        setGame(gameData[0]); // Assuming the API returns an array with a single game object
+        let gameData = await response.json();
+
+        gameData = checkGameData(gameData[0]);
+
+        console.log(gameData);
+        setGame(gameData); // Assuming the API returns an array with a single game object
         setLoading(false);
       } catch (error) {
         console.error('Error fetching game details:', error.message);
@@ -81,6 +101,7 @@ const GameDetailPage = () => {
       </div>
     );
   }
+
 
   // Render game details
   return (
