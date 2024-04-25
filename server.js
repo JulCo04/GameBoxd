@@ -183,7 +183,6 @@ app.post('/api/login', async (req, res, next) => {
 
 const { ObjectId } = require('mongodb');
 
-// Endpoint for sending friend requests
 app.post('/api/friends/send-request', async (req, res) => {
     const { userId, friendId } = req.body;
     const db = client.db("VGReview");
@@ -201,7 +200,13 @@ app.post('/api/friends/send-request', async (req, res) => {
             return;
         }
 
-        // Check if a friend request already exists
+        // Check if a friend request already exists from the sender to the receiver
+        if (receiver.friends && receiver.friends.receivedRequests.includes(userId)) {
+            res.status(400).json({ error: "You already have a pending friend request from this user" });
+            return;
+        }
+
+        // Check if a friend request already exists from the sender to the receiver (reverse check to catch both cases)
         if (sender.friends && sender.friends.sentRequests.includes(friendId)) {
             res.status(400).json({ error: "Friend request already sent" });
             return;
