@@ -545,15 +545,40 @@ app.post('/api/searchusers', async (req, res, next) => {
 
 
 app.post('/api/deleteuser', async (req, res, next) => {
-    // incoming: id
-    // outgoing: success message, error
     const { id } = req.body; // Extracting id from req.body
-    var error = '';
-    var successMessage = '';
+    let error = '';
+    let successMessage = '';
 
     try {
         const db = client.db("VGReview");
-        const result = await db.collection('Users').deleteOne({ _id: new ObjectId(id) });
+        const usersCollection = db.collection('Users');
+        const reviewsCollection = db.collection('Reviews');
+        const videoGamesCollection = db.collection('VideoGames');
+
+        // Delete all reviews by the user
+        await reviewsCollection.deleteMany({ userId: id });
+
+        // Update game scores based on the deleted reviews
+        const deletedReviews = await reviewsCollection.find({ userId: id }).toArray();
+        for (const review of deletedReviews) {
+            const { videoGameId, rating } = review;
+
+            // Find the game and update its rating and review count
+            const game = await videoGamesCollection.findOne({ videoGameId });
+            if (game) {
+                const { rating: oldRating, reviewCount } = game;
+                const newRating = (oldRating * reviewCount - rating) / (reviewCount - 1);
+                const newReviewCount = reviewCount - 1;
+
+                await videoGamesCollection.updateOne(
+                    { videoGameId },
+                    { $set: { rating: newRating, reviewCount: newReviewCount } }
+                );
+            }
+        }
+
+        // Finally, delete the user
+        const result = await usersCollection.deleteOne({ _id: new ObjectId(id) });
 
         if (result.deletedCount === 1) {
             successMessage = 'User deleted successfully';
@@ -564,7 +589,7 @@ app.post('/api/deleteuser', async (req, res, next) => {
         error = e.toString();
     }
 
-    var ret = { successMessage: successMessage, error: error };
+    const ret = { successMessage, error };
     res.status(200).json(ret);
 });
 
@@ -984,48 +1009,6 @@ app.delete('/api/reviews/delete/:reviewId', async (req, res) => {
 });
 
 
-/*app.post('/api/reviews', async (req, res, next) => {
-    // incoming: displayName, videoGameId, rating
-    // outgoing: error
-
-    const { textBody, rating, videoGameId, displayName } = req.body;
-    console.log(req.body);
-    const newReview = {
-        dateWritten: new Date(), // Set current date as dateCreated
-        textBody: textBody,
-        rating: rating,
-        videoGameId: videoGameId,
-        displayName: displayName
-    };
-    var error = '';
-
-    try {
-        const db = client.db("VGReview");
-        await db.collection('Reviews').insertOne(newReview);
-        const result = await db.collection('VideoGames').findOne({ videoGameId: videoGameId });
-        if (result) {
-            const ovrRating = result.rating;
-            const reviewCount = result.reviewCount;
-            const newRating = ((ovrRating * reviewCount) + rating) / (reviewCount + 1);
-            await db.collection('VideoGames').updateOne({ videoGameId: videoGameId }, { $set: { rating: newRating, reviewCount: (reviewCount + 1) } });
-            error = 'Game found';
-            var ret = { newRating: newRating, error: error };
-        } else {
-            const newGame = {
-                videoGameId: videoGameId,
-                rating: rating,
-                reviewCount: 1
-            };
-            await db.collection('VideoGames').insertOne(newGame);
-            error = "Game added";
-            var ret = { error: error };
-        }
-    } catch (e) {
-        error = e.toString();
-    }
-
-    res.status(200).json(ret);
-});*/
 
 app.get('/api/user/games/:userId', async (req, res) => {
     const userId = req.params.userId;
