@@ -99,7 +99,7 @@ const OtherUserProfileGamesListComponent = ({ displayName, userId }) => {
       <div className="mx-0 px-0 ">
 
         {!gamesEmpty &&
-          <div className="container overflow-scroll " style={{ height: '90vh' }}>
+          <div className="container-fluid overflow-scroll" style={{ height: '90vh' }}>
             <div className="row">
               {gamesDetailsList.map((game) => (
                 <div className="col-2 my-auto mb-3" align="center">
@@ -110,7 +110,7 @@ const OtherUserProfileGamesListComponent = ({ displayName, userId }) => {
                       src={game.cover ? parseCoverUrl(game.cover.url) : 'placeholder_url'}
                       alt={game.name}
                       className="img-fluid rounded"
-                      style={{ height: "230px" }}
+                      style={{ height: "260px" }}
                     />
                   </Link>
                 </div>
