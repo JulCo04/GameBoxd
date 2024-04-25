@@ -33,7 +33,7 @@ const OAuth2 = google.auth.OAuth2;
 
 const oauth2Client = new OAuth2(
     "373417650631-dv7hjo9k8br1u1tt4jkfbevs0rtf2v0g.apps.googleusercontent.com",
-    "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", // Client Secret
+    `${process.env.OATHSEC}`, // Client Secret
     "https://developers.google.com/oauthplayground" // Redirect URL
 );
 
@@ -53,7 +53,7 @@ const transporter = nodemailer.createTransport({
     auth: {
         type: "OAuth2",
         clientId: "373417650631-dv7hjo9k8br1u1tt4jkfbevs0rtf2v0g.apps.googleusercontent.com",
-        clientSecret: "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",
+        clientSecret: `${process.env.OATHSEC}`,
         refreshToken: "1//04nR4Kidq7FjeCgYIARAAGAQSNwF-L9Ir-zGcKzvPhsxDGfa2q4SL7AHoFfOk8E_EZ2BP36nUwF9-ypiACLBZ_CDlZwom1suN2rA",
         user: 'gamegridmail@gmail.com',
         accessToken: accessToken
@@ -183,7 +183,6 @@ app.post('/api/login', async (req, res, next) => {
 
 const { ObjectId } = require('mongodb');
 
-// Endpoint for sending friend requests
 app.post('/api/friends/send-request', async (req, res) => {
     const { userId, friendId } = req.body;
     const db = client.db("VGReview");
@@ -201,7 +200,13 @@ app.post('/api/friends/send-request', async (req, res) => {
             return;
         }
 
-        // Check if a friend request already exists
+        // Check if a friend request already exists from the sender to the receiver
+        if (receiver.friends && receiver.friends.receivedRequests.includes(userId)) {
+            res.status(400).json({ error: "You already have a pending friend request from this user" });
+            return;
+        }
+
+        // Check if a friend request already exists from the sender to the receiver (reverse check to catch both cases)
         if (sender.friends && sender.friends.sentRequests.includes(friendId)) {
             res.status(400).json({ error: "Friend request already sent" });
             return;
