@@ -53,7 +53,7 @@ const transporter = nodemailer.createTransport({
     auth: {
         type: "OAuth2",
         clientId: "373417650631-dv7hjo9k8br1u1tt4jkfbevs0rtf2v0g.apps.googleusercontent.com",
-        clientSecret: `${process.env.OATHSEC}`,
+        clientSecret: `${process.env.OATHSEC}`, // Client Secret
         refreshToken: "1//04nR4Kidq7FjeCgYIARAAGAQSNwF-L9Ir-zGcKzvPhsxDGfa2q4SL7AHoFfOk8E_EZ2BP36nUwF9-ypiACLBZ_CDlZwom1suN2rA",
         user: 'gamegridmail@gmail.com',
         accessToken: accessToken
